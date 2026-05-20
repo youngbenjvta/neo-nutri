@@ -67,8 +67,8 @@ export default function MainApp() {
   const activeTab = TABS.some((t) => t.id === screen) ? screen : "inicio";
 
   return (
-    <div className="shell">
-      <style>{SHELL_CSS}</style>
+    <div className="shell" suppressHydrationWarning>
+      <style suppressHydrationWarning>{SHELL_CSS}</style>
 
       <div className="screen-area">{renderScreen()}</div>
 
@@ -95,7 +95,6 @@ const SHELL_CSS = `
     position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:460px;
     display:flex; justify-content:space-around; padding:9px 6px 13px;
     background:linear-gradient(0deg,#0d0805,#1a0f0a); border-top:2px solid #d23b2e; z-index:50;
-    font-family:'Zen Kaku Gothic New', sans-serif;
   }
   .bottom-nav .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px;
     background:none; border:none; color:#b09a7e; cursor:pointer; font-size:10px; letter-spacing:1px; font-weight:700; }

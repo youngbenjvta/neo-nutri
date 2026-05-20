@@ -92,11 +92,32 @@ function Avatar({ onClick }: { onClick?: () => void }) {
   );
 }
 
+// Tipo de comida (igual que en Comida.tsx, para compartir los datos)
+type Comida = { id: number; tipo: string; nombre: string; kcal: number };
+
+// Mapa de tipo de comida -> kanji, para mostrar la etiqueta
+const TIPO_JP: Record<string, string> = {
+  Desayuno: "朝", Almuerzo: "昼", Merienda: "間", Cena: "夜",
+};
+
+// Comidas de ejemplo iniciales (las MISMAS que en Comida.tsx, misma clave)
+const COMIDAS_INICIAL: Comida[] = [
+  { id: 1, tipo: "Desayuno", nombre: "Avena con banana y proteína", kcal: 520 },
+  { id: 2, tipo: "Almuerzo", nombre: "Pollo, arroz y brócoli", kcal: 620 },
+  { id: 3, tipo: "Merienda", nombre: "Yogur griego con frutos rojos", kcal: 250 },
+  { id: 4, tipo: "Cena", nombre: "Salmón, quinoa y espárragos", kcal: 550 },
+];
+
 export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => void }) {
   const d = DATA;
   const [beast, setBeast] = usePersistedState("dashboard.beast", false);
+  // ¡Misma clave que Comida.tsx! Por eso comparten los datos.
+  const [comidas] = usePersistedState<Comida[]>("comida.lista", COMIDAS_INICIAL);
   const xpPct = (d.warrior.xp / d.warrior.xpMax) * 100;
   const go = (s: string) => onNavigate && onNavigate(s);
+
+  // Calorías reales = suma de las comidas registradas
+  const kcalReal = comidas.reduce((sum, c) => sum + (Number(c.kcal) || 0), 0);
 
   return (
     <div className={`app ${beast ? "beast" : ""}`}>
@@ -147,7 +168,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
       <section className="panel">
         <h2 className="card-title">食 MACROS DIARIAS</h2>
         <div className="macros">
-          <MacroRing kcal={d.macros.kcal} kcalMax={d.macros.kcalMax} />
+          <MacroRing kcal={kcalReal} kcalMax={d.macros.kcalMax} />
           <div className="macro-list">
             <MacroRow icon={Beef} label="Proteínas" v={d.macros.protein.v} max={d.macros.protein.max} tone="#d23b2e" />
             <MacroRow icon={Wheat} label="Carbohidratos" v={d.macros.carbs.v} max={d.macros.carbs.max} tone="#e8a13a" />
@@ -174,13 +195,18 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
       <section className="panel">
         <div className="card-head">
           <h2 className="card-title">録 REGISTRO</h2>
-          <button className="add-btn"><Plus size={18} /></button>
+          <button className="add-btn" onClick={() => go("comida")}><Plus size={18} /></button>
         </div>
         <div className="meals">
-          {d.meals.map((m) => (
-            <div key={m.name} className="meal">
-              <span className="meal-tag">{m.tag}</span>
-              <div className="meal-info"><b>{m.name}</b><em>{m.desc}</em></div>
+          {comidas.length === 0 && (
+            <p style={{ fontSize: 13, color: "#b09a7e", textAlign: "center", padding: "12px 8px" }}>
+              Sin comidas hoy. Toca + para registrar.
+            </p>
+          )}
+          {comidas.map((m) => (
+            <div key={m.id} className="meal">
+              <span className="meal-tag">{TIPO_JP[m.tipo] || "食"}</span>
+              <div className="meal-info"><b>{m.tipo}</b><em>{m.nombre}</em></div>
               <span className="meal-kcal">{m.kcal}<small>kcal</small></span>
             </div>
           ))}
