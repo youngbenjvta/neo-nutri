@@ -6,6 +6,8 @@ import {
 import Dashboard from "./Dashboard";
 import Porciones from "./Porciones";
 import Perfil from "./Perfil";
+import Rutinas from "./Rutinas";
+import Comida from "./Comida";
 
 // ============================================================
 //  NEO NUTRI — MainApp (el "cerebro" de navegación)
@@ -47,9 +49,9 @@ export default function MainApp() {
       case "porciones":
         return <Porciones onBack={() => setScreen("inicio")} />;
       case "rutinas":
-        return <ProntoScreen titulo="RUTINAS" jp="ルーティン" />;
+        return <Rutinas onBack={() => setScreen("inicio")} />;
       case "comida":
-        return <ProntoScreen titulo="ALIMENTACIÓN" jp="食事" />;
+        return <Comida onBack={() => setScreen("inicio")} />;
       case "progreso":
         return <ProntoScreen titulo="PROGRESO" jp="進捗" />;
       case "perfil":
