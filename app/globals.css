@@ -5,3 +5,65 @@ body {
   color: white;
   font-family: sans-serif;
 }
+/* ============================================================
+   NEO NUTRI — Animaciones (CSS puro)
+   Pega TODO esto al final de tu app/globals.css
+   ============================================================ */
+
+/* --- Aparición de pantalla (fade + leve subida) --- */
+@keyframes neoFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* La pantalla activa entra suave. .app es el contenedor de cada pantalla. */
+.app {
+  animation: neoFadeIn 0.35s ease-out;
+}
+
+/* --- Fade-in escalonado de los paneles/tarjetas --- */
+@keyframes neoPanelIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.panel {
+  animation: neoPanelIn 0.4s ease-out backwards;
+}
+/* Cada panel entra un poquito después que el anterior (efecto cascada) */
+.panel:nth-of-type(1) { animation-delay: 0.04s; }
+.panel:nth-of-type(2) { animation-delay: 0.10s; }
+.panel:nth-of-type(3) { animation-delay: 0.16s; }
+.panel:nth-of-type(4) { animation-delay: 0.22s; }
+.panel:nth-of-type(5) { animation-delay: 0.28s; }
+
+/* --- Barra de XP: que se llene suave en vez de saltar --- */
+.xp-fill,
+.resumen-fill,
+.barra-fill {
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* --- Tarjetas que reaccionan al tocar (un poquito de "vida") --- */
+.menu-item,
+.rutina-card,
+.stat,
+.meal {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+}
+
+/* --- El aura del avatar late suavemente --- */
+@keyframes neoPulse {
+  0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+  50%      { opacity: 1;    transform: translateX(-50%) scale(1.06); }
+}
+.avatar-aura {
+  animation: neoPulse 2.8s ease-in-out infinite;
+}
+
+/* --- Respeta a quien prefiere menos movimiento (accesibilidad) --- */
+@media (prefers-reduced-motion: reduce) {
+  .app, .panel, .avatar-aura {
+    animation: none;
+  }
+}
