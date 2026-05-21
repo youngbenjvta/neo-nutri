@@ -70,8 +70,8 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
   const series = SERIES_POR_NIVEL[nivel];
 
   // Al completar un entrenamiento: suma XP, suena, y muestra confirmación.
-  function entrenar() {
-    const subioNivel = completarEntreno();
+  async function entrenar() {
+    const subioNivel = await completarEntreno();
     if (subioNivel) {
       sonido.levelUp();   // ¡tu levelup.mp3!
     } else {
