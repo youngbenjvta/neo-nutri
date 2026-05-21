@@ -1,13 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-
+// Service worker desactivado por ahora.
+// Lo reactivaremos más adelante cuando montemos la PWA correctamente.
 export default function SWRegister() {
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js");
-    }
-  }, []);
-
   return null;
 }

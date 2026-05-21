@@ -102,7 +102,6 @@ const SHELL_CSS = `
 `;
 
 const PRONTO_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap');
   .pronto {
     max-width:460px; margin:0 auto; min-height:100vh; padding:16px 14px 92px;
     display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;

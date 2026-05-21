@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Dumbbell, Flame } from "lucide-react";
 import { useProgreso, XP_POR_ENTRENO } from "./useProgreso";
+import { useSonido } from "./useSonido";
 
 // ============================================================
 //  NEO NUTRI — RUTINAS (shonen pintado)
@@ -62,16 +63,21 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
   const [nivel, setNivel] = useState("prin");
   const [abierta, setAbierta] = useState<string | null>(null); // id de rutina abierta, o null = lista
   const { completarEntreno } = useProgreso();
+  const sonido = useSonido();
   const [hecho, setHecho] = useState(false); // muestra confirmación de XP ganado
 
   const rutina = RUTINAS.find((r) => r.id === abierta);
   const series = SERIES_POR_NIVEL[nivel];
 
-  // Al completar un entrenamiento: suma XP y muestra confirmación.
+  // Al completar un entrenamiento: suma XP, suena, y muestra confirmación.
   function entrenar() {
-    completarEntreno();
+    const subioNivel = completarEntreno();
+    if (subioNivel) {
+      sonido.levelUp();   // ¡tu levelup.mp3!
+    } else {
+      sonido.entrenar();  // beep de logro
+    }
     setHecho(true);
-    // tras un momento, vuelve al inicio
     setTimeout(() => {
       setHecho(false);
       onBack && onBack();
@@ -82,7 +88,7 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
   if (rutina) {
     return (
       <div className="app">
-        <style>{CSS}</style>
+        <style suppressHydrationWarning>{CSS}</style>
         <header className="top">
           <button className="back" aria-label="Volver" onClick={() => setAbierta(null)}>
             <ChevronLeft size={22} />
@@ -119,7 +125,7 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
   // ---------- VISTA LISTA ----------
   return (
     <div className="app">
-      <style>{CSS}</style>
+      <style suppressHydrationWarning>{CSS}</style>
       <header className="top">
         <button className="back" aria-label="Volver" onClick={() => onBack && onBack()}>
           <ChevronLeft size={22} />
@@ -162,7 +168,6 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
 }
 
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap');
   * { box-sizing: border-box; margin: 0; }
   .app {
     --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;

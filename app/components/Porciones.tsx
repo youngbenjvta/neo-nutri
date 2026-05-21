@@ -104,7 +104,7 @@ const EQUIVS = [
 export default function Porciones({ onBack }: { onBack?: () => void }) {
   return (
     <div className="app">
-      <style>{CSS}</style>
+      <style suppressHydrationWarning>{CSS}</style>
 
       {/* HEADER */}
       <header className="top">
@@ -153,7 +153,6 @@ export default function Porciones({ onBack }: { onBack?: () => void }) {
 }
 
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap');
   * { box-sizing: border-box; margin: 0; }
   .app {
     --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;

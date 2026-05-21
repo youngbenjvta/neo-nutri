@@ -2,11 +2,12 @@
 import React, { useState } from "react";
 import {
   Flame, Dumbbell, TrendingUp, ChevronRight,
-  Activity, Plus, Droplet, Beef, Wheat, Salad
+  Activity, Plus, Droplet, Beef, Wheat, Salad, Volume2, VolumeX
 } from "lucide-react";
 import { usePersistedState } from "./usePersistedState";
 import { useProgreso } from "./useProgreso";
 import { getAvatar, WarriorSVG } from "./avatars";
+import { useSonido } from "./useSonido";
 
 // ============================================================
 //  NEO NUTRI — DASHBOARD (shonen pintado)
@@ -116,6 +117,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   // Leemos del MISMO sitio donde el Perfil guarda (claves compartidas)
   const [nombre] = usePersistedState("perfil.nombre", "GUERRERO");
   const [avatarId] = usePersistedState("perfil.avatar", "a1");
+  const sonido = useSonido();
   const xpPct = (prog.xp / prog.xpMax) * 100;
   const go = (s: string) => onNavigate && onNavigate(s);
 
@@ -124,7 +126,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
 
   return (
     <div className={`app ${beast ? "beast" : ""}`}>
-      <style>{CSS}</style>
+      <style suppressHydrationWarning>{CSS}</style>
 
       {/* HEADER */}
       <header className="hero panel">
@@ -132,6 +134,9 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <div className="hero-top">
           <h1 className="brand">NEO NUTRI</h1>
           <span className="brand-jp">ネオニュートリ</span>
+          <button className="mute-btn" onClick={sonido.toggleMudo} aria-label="Silenciar" title="Silenciar sonidos">
+            {sonido.mudo ? <VolumeX size={18} /> : <Volume2 size={18} />}
+          </button>
         </div>
 
         <Avatar onClick={() => go("perfil")} avatarId={avatarId} />
@@ -139,7 +144,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <div className="hero-text">
           <p className="hero-hi">BIENVENIDO, <b>{nombre || "GUERRERO"}</b></p>
           <p className="hero-sub">Cada repetición te acerca a tu mejor versión.</p>
-          <button className="beast-btn" onClick={() => setBeast(!beast)}>
+          <button className="beast-btn" onClick={() => { sonido.click(); setBeast(!beast); }}>
             <Flame size={16} /> {beast ? "¡MODO BESTIA!" : "MODO BESTIA"}
           </button>
         </div>
@@ -220,7 +225,6 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
 }
 
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap');
   * { box-sizing: border-box; margin: 0; }
   .app {
     --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;
@@ -254,6 +258,10 @@ const CSS = `
     mask: radial-gradient(circle at 72% 32%, #000 8%, transparent 58%);
   }
   .hero-top { display:flex; align-items:baseline; gap:10px; }
+  .mute-btn { margin-left:auto; align-self:center; width:34px; height:34px; border-radius:6px;
+    border:2px solid var(--ink); background:#241410; color:var(--mut); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.12s; }
+  .mute-btn:hover { color:var(--amber); border-color:var(--amber); }
   .brand { font-family:'Bebas Neue'; font-size:40px; letter-spacing:2px; line-height:.9;
     color:var(--paper); text-shadow:3px 3px 0 var(--red); }
   .brand-jp { font-size:12px; color:var(--mut); letter-spacing:3px; }
