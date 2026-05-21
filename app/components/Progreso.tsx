@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, TrendingDown, Plus, Droplet, Footprints, Dumbbell } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
-import { usePersistedState } from "./usePersistedState";
+import { usePesosNube } from "./usePesosNube";
 
 // ============================================================
 //  NEO NUTRI — PROGRESO (shonen pintado)
@@ -11,18 +11,6 @@ import { usePersistedState } from "./usePersistedState";
 // ============================================================
 
 type Punto = { dia: string; peso: number };
-
-// Historial de peso inicial (datos de ejemplo). El usuario añade los suyos.
-const PESO_INICIAL: Punto[] = [
-  { dia: "1", peso: 73.8 },
-  { dia: "5", peso: 73.5 },
-  { dia: "9", peso: 73.1 },
-  { dia: "13", peso: 73.4 },
-  { dia: "17", peso: 72.9 },
-  { dia: "21", peso: 72.6 },
-  { dia: "25", peso: 72.5 },
-  { dia: "29", peso: 72.4 },
-];
 
 const PERIODOS = ["SEMANA", "MES", "3 MESES", "AÑO"];
 
@@ -46,21 +34,35 @@ function MiTooltip({ active, payload }: { active?: boolean; payload?: { value: n
 }
 
 export default function Progreso({ onBack }: { onBack?: () => void }) {
-  const [historial, setHistorial] = usePersistedState<Punto[]>("progreso.peso", PESO_INICIAL);
+  const { pesos, cargando, agregar } = usePesosNube();
   const [periodo, setPeriodo] = useState("MES");
   const [abrir, setAbrir] = useState(false);
   const [nuevoPeso, setNuevoPeso] = useState("");
+
+  // Convertimos los pesos de la nube al formato que usa el gráfico {dia, peso}.
+  // El "dia" es solo la posición en la lista (1, 2, 3...) para el eje X.
+  const historial: Punto[] = pesos.map((p, i) => ({ dia: String(i + 1), peso: p.peso }));
+
+  // Sincronizamos con localStorage para que el Dashboard lea el peso actual.
+  useEffect(() => {
+    if (!cargando) {
+      try {
+        localStorage.setItem("progreso.peso", JSON.stringify(historial));
+      } catch {
+        // sin localStorage, no pasa nada
+      }
+    }
+  }, [cargando, historial]);
 
   const pesoActual = historial.length ? historial[historial.length - 1].peso : 0;
   const pesoInicial = historial.length ? historial[0].peso : 0;
   const diff = (pesoActual - pesoInicial).toFixed(1);
   const bajando = pesoActual <= pesoInicial;
 
-  function añadirPeso() {
+  async function añadirPeso() {
     const p = Number(nuevoPeso);
     if (!p || p <= 0) return;
-    const sigDia = String((historial.length ? Number(historial[historial.length - 1].dia) : 0) + 4);
-    setHistorial([...historial, { dia: sigDia, peso: p }]);
+    await agregar(p);
     setNuevoPeso("");
     setAbrir(false);
   }
