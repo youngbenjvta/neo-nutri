@@ -1,8 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, Target, Check } from "lucide-react";
-import { usePersistedState } from "./usePersistedState";
 import { AVATARS, WarriorSVG } from "./avatars";
+import { usePerfilNube } from "./usePerfilNube";
 
 // ============================================================
 //  NEO NUTRI — PERFIL (shonen pintado)
@@ -18,21 +18,42 @@ const OBJETIVOS = [
 ];
 
 export default function Perfil({ onBack, onCerrarSesion }: { onBack?: () => void; onCerrarSesion?: () => void }) {
-  const [avatar, setAvatar] = usePersistedState("perfil.avatar", "a1");
-  const [nombre, setNombre] = usePersistedState("perfil.nombre", "GUERRERO");
-  const [objetivo, setObjetivo] = usePersistedState("perfil.objetivo", "bajar");
-  const [pesoMeta, setPesoMeta] = usePersistedState("perfil.pesoMeta", "70");
-  const [kcalMeta, setKcalMeta] = usePersistedState("perfil.kcalMeta", "2600");
-  const [altura, setAltura] = usePersistedState("perfil.altura", "175");
-  const [edad, setEdad] = usePersistedState("perfil.edad", "25");
+  const { perfil, guardarPerfil, cargando, guardando } = usePerfilNube();
+
+  const [avatar, setAvatar] = useState("a1");
+  const [nombre, setNombre] = useState("GUERRERO");
+  const [objetivo, setObjetivo] = useState("bajar");
+  const [pesoMeta, setPesoMeta] = useState("70");
+  const [kcalMeta, setKcalMeta] = useState("2600");
+  const [altura, setAltura] = useState("175");
+  const [edad, setEdad] = useState("25");
   const [guardado, setGuardado] = useState(false);
+
+  // Cuando llega el perfil desde la nube, llenamos los campos
+  useEffect(() => {
+    if (!cargando) {
+      setAvatar(perfil.avatar);
+      setNombre(perfil.nombre);
+      setObjetivo(perfil.objetivo);
+      setPesoMeta(perfil.peso_meta);
+      setKcalMeta(perfil.kcal_meta);
+      setAltura(perfil.altura);
+      setEdad(perfil.edad);
+    }
+  }, [cargando, perfil]);
 
   const sel = AVATARS.find((a) => a.id === avatar) || AVATARS[0];
 
-  function guardar() {
-    // Por ahora solo muestra confirmación. El guardado real se conecta luego.
-    setGuardado(true);
-    setTimeout(() => setGuardado(false), 1800);
+  async function guardar() {
+    // Guarda en la nube (y también en localStorage para las otras pantallas)
+    const ok = await guardarPerfil({
+      nombre, avatar, objetivo,
+      peso_meta: pesoMeta, kcal_meta: kcalMeta, altura, edad,
+    });
+    if (ok) {
+      setGuardado(true);
+      setTimeout(() => setGuardado(false), 1800);
+    }
   }
 
   return (
@@ -126,8 +147,8 @@ export default function Perfil({ onBack, onCerrarSesion }: { onBack?: () => void
           </div>
         </div>
 
-        <button className="save-btn" onClick={guardar}>
-          {guardado ? "✓ ¡GUARDADO!" : "GUARDAR CAMBIOS"}
+        <button className="save-btn" onClick={guardar} disabled={guardando}>
+          {guardando ? "GUARDANDO..." : guardado ? "✓ ¡GUARDADO!" : "GUARDAR CAMBIOS"}
         </button>
       </section>
 
