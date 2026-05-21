@@ -1,33 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, Plus, Trash2, Flame, X } from "lucide-react";
-import { usePersistedState } from "./usePersistedState";
+import { useComidasNube } from "./useComidasNube";
 
 // ============================================================
 //  NEO NUTRI — ALIMENTACIÓN (shonen pintado)
 //  Registro de comidas del día. Añadir / borrar. Persistente.
 // ============================================================
 
-type Comida = {
-  id: number;
-  tipo: string;   // Desayuno, Almuerzo, etc.
-  nombre: string; // descripción
-  kcal: number;
-};
-
 const TIPOS = [
   { id: "Desayuno", jp: "朝", tone: "#e8a13a" },
   { id: "Almuerzo", jp: "昼", tone: "#d23b2e" },
   { id: "Merienda", jp: "間", tone: "#9b6bd2" },
   { id: "Cena", jp: "夜", tone: "#3f7d6e" },
-];
-
-// Comidas de ejemplo con las que arranca (luego el usuario edita)
-const INICIAL: Comida[] = [
-  { id: 1, tipo: "Desayuno", nombre: "Avena con banana y proteína", kcal: 520 },
-  { id: 2, tipo: "Almuerzo", nombre: "Pollo, arroz y brócoli", kcal: 620 },
-  { id: 3, tipo: "Merienda", nombre: "Yogur griego con frutos rojos", kcal: 250 },
-  { id: 4, tipo: "Cena", nombre: "Salmón, quinoa y espárragos", kcal: 550 },
 ];
 
 function tonoDe(tipo: string) {
@@ -38,7 +23,8 @@ function jpDe(tipo: string) {
 }
 
 export default function Comida({ onBack }: { onBack?: () => void }) {
-  const [comidas, setComidas] = usePersistedState<Comida[]>("comida.lista", INICIAL);
+  // Comidas desde la nube (Supabase)
+  const { comidas, cargando, agregar, borrar: borrarNube } = useComidasNube();
 
   // Estado del formulario para añadir
   const [abrir, setAbrir] = useState(false);
@@ -46,27 +32,33 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
   const [nombre, setNombre] = useState("");
   const [kcal, setKcal] = useState("");
 
+  // Cada vez que cambian las comidas, sincronizamos a localStorage
+  // para que el Dashboard (que lee "comida.lista") siga funcionando.
+  useEffect(() => {
+    if (!cargando) {
+      try {
+        localStorage.setItem("comida.lista", JSON.stringify(comidas));
+      } catch {
+        // si no hay localStorage, no pasa nada
+      }
+    }
+  }, [comidas, cargando]);
+
   const totalKcal = comidas.reduce((suma, c) => suma + (Number(c.kcal) || 0), 0);
   const META = 2600;
   const pct = Math.min((totalKcal / META) * 100, 100);
 
-  function añadir() {
+  async function añadir() {
     if (!nombre.trim() || !kcal) return; // evita añadir vacíos
-    const nueva: Comida = {
-      id: Date.now(),               // id único basado en la hora
-      tipo,
-      nombre: nombre.trim(),
-      kcal: Number(kcal),
-    };
-    setComidas([...comidas, nueva]);
+    await agregar(tipo, nombre.trim(), Number(kcal));
     // limpiar y cerrar
     setNombre("");
     setKcal("");
     setAbrir(false);
   }
 
-  function borrar(id: number) {
-    setComidas(comidas.filter((c) => c.id !== id));
+  async function borrar(id: number) {
+    await borrarNube(id);
   }
 
   return (
@@ -142,7 +134,10 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
 
         {/* LISTA */}
         <div className="meals">
-          {comidas.length === 0 && (
+          {cargando && (
+            <p className="vacio">Cargando tus comidas desde la nube...</p>
+          )}
+          {!cargando && comidas.length === 0 && (
             <p className="vacio">Aún no has registrado comidas hoy. Toca + para empezar.</p>
           )}
           {comidas.map((c) => (
