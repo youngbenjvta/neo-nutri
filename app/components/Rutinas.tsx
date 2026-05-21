@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Dumbbell, Flame } from "lucide-react";
+import { useProgreso, XP_POR_ENTRENO } from "./useProgreso";
 
 // ============================================================
 //  NEO NUTRI — RUTINAS (shonen pintado)
@@ -60,9 +61,22 @@ const RUTINAS = [
 export default function Rutinas({ onBack }: { onBack?: () => void }) {
   const [nivel, setNivel] = useState("prin");
   const [abierta, setAbierta] = useState<string | null>(null); // id de rutina abierta, o null = lista
+  const { completarEntreno } = useProgreso();
+  const [hecho, setHecho] = useState(false); // muestra confirmación de XP ganado
 
   const rutina = RUTINAS.find((r) => r.id === abierta);
   const series = SERIES_POR_NIVEL[nivel];
+
+  // Al completar un entrenamiento: suma XP y muestra confirmación.
+  function entrenar() {
+    completarEntreno();
+    setHecho(true);
+    // tras un momento, vuelve al inicio
+    setTimeout(() => {
+      setHecho(false);
+      onBack && onBack();
+    }, 1400);
+  }
 
   // ---------- VISTA DETALLE ----------
   if (rutina) {
@@ -95,8 +109,8 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
           ))}
         </div>
 
-        <button className="start-btn" onClick={() => onBack && onBack()}>
-          <Flame size={16} /> COMENZAR ENTRENAMIENTO
+        <button className="start-btn" onClick={entrenar} disabled={hecho}>
+          <Flame size={16} /> {hecho ? `+${XP_POR_ENTRENO.toLocaleString()} XP · ¡BIEN HECHO!` : "COMENZAR ENTRENAMIENTO"}
         </button>
       </div>
     );

@@ -5,6 +5,7 @@ import {
   Activity, Plus, Droplet, Beef, Wheat, Salad
 } from "lucide-react";
 import { usePersistedState } from "./usePersistedState";
+import { useProgreso } from "./useProgreso";
 
 // ============================================================
 //  NEO NUTRI — DASHBOARD (shonen pintado)
@@ -113,7 +114,8 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   const [beast, setBeast] = usePersistedState("dashboard.beast", false);
   // ¡Misma clave que Comida.tsx! Por eso comparten los datos.
   const [comidas] = usePersistedState<Comida[]>("comida.lista", COMIDAS_INICIAL);
-  const xpPct = (d.warrior.xp / d.warrior.xpMax) * 100;
+  const { prog } = useProgreso();
+  const xpPct = (prog.xp / prog.xpMax) * 100;
   const go = (s: string) => onNavigate && onNavigate(s);
 
   // Calorías reales = suma de las comidas registradas
@@ -147,19 +149,19 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <h2 className="card-title">闘 TU PROGRESO</h2>
         <div className="xp-head">
           <div className="lvl">
-            <span className="lvl-num">{d.warrior.level}</span>
+            <span className="lvl-num">{prog.nivel}</span>
             <span className="lvl-lbl">NIVEL</span>
           </div>
           <div className="xp-info">
             <span className="xp-lbl">XP</span>
-            <span className="xp-val">{d.warrior.xp.toLocaleString()} / {d.warrior.xpMax.toLocaleString()}</span>
+            <span className="xp-val">{prog.xp.toLocaleString()} / {prog.xpMax.toLocaleString()}</span>
           </div>
         </div>
         <div className="xp-bar"><div className="xp-fill" style={{ width: `${xpPct}%` }} /></div>
 
         <div className="stat-grid">
           <div className="stat"><Flame size={18} /><b>{d.stats.streak} días</b><span>RACHA</span></div>
-          <div className="stat"><Dumbbell size={18} /><b>{d.stats.workouts}</b><span>ENTRENOS</span></div>
+          <div className="stat"><Dumbbell size={18} /><b>{prog.entrenos}</b><span>ENTRENOS</span></div>
           <div className="stat"><Activity size={18} /><b>{d.stats.weight} kg</b><span>PESO</span></div>
         </div>
       </section>
