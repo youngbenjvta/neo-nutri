@@ -95,6 +95,21 @@ function Avatar({ onClick, avatarId }: { onClick?: () => void; avatarId: string 
 // Tipo de comida (igual que en Comida.tsx, para compartir los datos)
 type Comida = { id: number; tipo: string; nombre: string; kcal: number };
 
+// Tipo de punto de peso (igual que en Progreso.tsx, para compartir los datos)
+type Punto = { dia: string; peso: number };
+
+// Historial de peso inicial (las MISMAS que en Progreso.tsx, misma clave)
+const PESO_INICIAL: Punto[] = [
+  { dia: "1", peso: 73.8 },
+  { dia: "5", peso: 73.5 },
+  { dia: "9", peso: 73.1 },
+  { dia: "13", peso: 73.4 },
+  { dia: "17", peso: 72.9 },
+  { dia: "21", peso: 72.6 },
+  { dia: "25", peso: 72.5 },
+  { dia: "29", peso: 72.4 },
+];
+
 // Mapa de tipo de comida -> kanji, para mostrar la etiqueta
 const TIPO_JP: Record<string, string> = {
   Desayuno: "朝", Almuerzo: "昼", Merienda: "間", Cena: "夜",
@@ -117,6 +132,9 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   // Leemos del MISMO sitio donde el Perfil guarda (claves compartidas)
   const [nombre] = usePersistedState("perfil.nombre", "GUERRERO");
   const [avatarId] = usePersistedState("perfil.avatar", "a1");
+  // Mismo historial que Progreso.tsx (clave compartida): el último es el peso actual
+  const [historialPeso] = usePersistedState<Punto[]>("progreso.peso", PESO_INICIAL);
+  const pesoActual = historialPeso.length ? historialPeso[historialPeso.length - 1].peso : 0;
   const sonido = useSonido();
   const xpPct = (prog.xp / prog.xpMax) * 100;
   const go = (s: string) => onNavigate && onNavigate(s);
@@ -168,7 +186,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <div className="stat-grid">
           <div className="stat"><Flame size={18} /><b>{d.stats.streak} días</b><span>RACHA</span></div>
           <div className="stat"><Dumbbell size={18} /><b>{prog.entrenos}</b><span>ENTRENOS</span></div>
-          <div className="stat"><Activity size={18} /><b>{d.stats.weight} kg</b><span>PESO</span></div>
+          <div className="stat"><Activity size={18} /><b>{pesoActual} kg</b><span>PESO</span></div>
         </div>
       </section>
 
