@@ -9,6 +9,7 @@ import Perfil from "./Perfil";
 import Rutinas from "./Rutinas";
 import Comida from "./Comida";
 import Progreso from "./Progreso";
+import Logros from "./Logros";
 import Login from "./Login";
 import { supabase } from "./supabaseClient";
 
@@ -93,7 +94,9 @@ export default function MainApp() {
       case "progreso":
         return <Progreso onBack={() => setScreen("inicio")} />;
       case "perfil":
-        return <Perfil onBack={() => setScreen("inicio")} onCerrarSesion={cerrarSesion} />;
+        return <Perfil onBack={() => setScreen("inicio")} onCerrarSesion={cerrarSesion} onLogros={() => setScreen("logros")} />;
+      case "logros":
+        return <Logros onBack={() => setScreen("perfil")} />;
       default:
         return <Dashboard onNavigate={setScreen} />;
     }

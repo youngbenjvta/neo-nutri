@@ -17,7 +17,7 @@ const OBJETIVOS = [
   { id: "subir", label: "SUBIR" },
 ];
 
-export default function Perfil({ onBack, onCerrarSesion }: { onBack?: () => void; onCerrarSesion?: () => void }) {
+export default function Perfil({ onBack, onCerrarSesion, onLogros }: { onBack?: () => void; onCerrarSesion?: () => void; onLogros?: () => void }) {
   const { perfil, guardarPerfil, cargando, guardando } = usePerfilNube();
 
   const [avatar, setAvatar] = useState("a1");
@@ -152,6 +152,12 @@ export default function Perfil({ onBack, onCerrarSesion }: { onBack?: () => void
         </button>
       </section>
 
+      {onLogros && (
+        <button className="logros-btn" onClick={onLogros}>
+          🏅 VER LOGROS
+        </button>
+      )}
+
       {onCerrarSesion && (
         <button className="logout-btn" onClick={onCerrarSesion}>
           CERRAR SESIÓN
@@ -226,6 +232,10 @@ const CSS = `
     color:var(--paper); cursor:pointer; background:linear-gradient(95deg,var(--red),#a02619);
     border:2px solid var(--ink); padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; }
   .save-btn:active { transform:translate(3px,3px); box-shadow:none; }
+  .logros-btn { width:100%; font-family:'Bebas Neue'; font-size:19px; letter-spacing:2px; color:var(--ink);
+    cursor:pointer; background:linear-gradient(95deg,var(--gold),#b8923a); border:2px solid var(--ink);
+    padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-bottom:11px; }
+  .logros-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .logout-btn { width:100%; font-family:'Bebas Neue'; font-size:17px; letter-spacing:2px; color:var(--mut);
     cursor:pointer; background:#241410; border:2px solid var(--ink); padding:11px; border-radius:6px;
     transition:.12s; }
