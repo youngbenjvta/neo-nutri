@@ -17,7 +17,7 @@ const OBJETIVOS = [
   { id: "subir", label: "SUBIR" },
 ];
 
-export default function Perfil({ onBack }: { onBack?: () => void }) {
+export default function Perfil({ onBack, onCerrarSesion }: { onBack?: () => void; onCerrarSesion?: () => void }) {
   const [avatar, setAvatar] = usePersistedState("perfil.avatar", "a1");
   const [nombre, setNombre] = usePersistedState("perfil.nombre", "GUERRERO");
   const [objetivo, setObjetivo] = usePersistedState("perfil.objetivo", "bajar");
@@ -130,6 +130,12 @@ export default function Perfil({ onBack }: { onBack?: () => void }) {
           {guardado ? "✓ ¡GUARDADO!" : "GUARDAR CAMBIOS"}
         </button>
       </section>
+
+      {onCerrarSesion && (
+        <button className="logout-btn" onClick={onCerrarSesion}>
+          CERRAR SESIÓN
+        </button>
+      )}
     </div>
   );
 }
@@ -199,4 +205,8 @@ const CSS = `
     color:var(--paper); cursor:pointer; background:linear-gradient(95deg,var(--red),#a02619);
     border:2px solid var(--ink); padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; }
   .save-btn:active { transform:translate(3px,3px); box-shadow:none; }
+  .logout-btn { width:100%; font-family:'Bebas Neue'; font-size:17px; letter-spacing:2px; color:var(--mut);
+    cursor:pointer; background:#241410; border:2px solid var(--ink); padding:11px; border-radius:6px;
+    transition:.12s; }
+  .logout-btn:hover { color:var(--red); border-color:var(--red); }
 `;

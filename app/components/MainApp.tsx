@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Home, Dumbbell, Salad, TrendingUp, User, Flame
 } from "lucide-react";
@@ -9,6 +9,8 @@ import Perfil from "./Perfil";
 import Rutinas from "./Rutinas";
 import Comida from "./Comida";
 import Progreso from "./Progreso";
+import Login from "./Login";
+import { supabase } from "./supabaseClient";
 
 // ============================================================
 //  NEO NUTRI — MainApp (el "cerebro" de navegación)
@@ -41,6 +43,41 @@ export default function MainApp() {
   // 'screen' recuerda qué pantalla mostrar. Empieza en 'inicio'.
   const [screen, setScreen] = useState("inicio");
 
+  // Sesión del usuario: null = no logueado, objeto = logueado, undefined = aún verificando
+  const [sesion, setSesion] = useState<object | null | undefined>(undefined);
+
+  useEffect(() => {
+    // Al cargar: revisar si ya hay sesión activa
+    supabase.auth.getSession().then(({ data }) => {
+      setSesion(data.session);
+    });
+    // Escuchar cambios de sesión (login / logout)
+    const { data: listener } = supabase.auth.onAuthStateChange((_evento, nuevaSesion) => {
+      setSesion(nuevaSesion);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  async function cerrarSesion() {
+    await supabase.auth.signOut();
+    setScreen("inicio");
+  }
+
+  // Mientras verifica la sesión, mostramos un cargando simple
+  if (sesion === undefined) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+        background: "#1a0f0a", color: "#e8a13a", fontFamily: "'Bebas Neue', sans-serif", fontSize: 24, letterSpacing: 2 }}>
+        CARGANDO...
+      </div>
+    );
+  }
+
+  // Si NO hay sesión, mostramos el login
+  if (!sesion) {
+    return <Login onEntrar={() => { /* el listener actualiza la sesión solo */ }} />;
+  }
+
   // Decide qué componente mostrar según 'screen'.
   function renderScreen() {
     switch (screen) {
@@ -56,7 +93,7 @@ export default function MainApp() {
       case "progreso":
         return <Progreso onBack={() => setScreen("inicio")} />;
       case "perfil":
-        return <Perfil onBack={() => setScreen("inicio")} />;
+        return <Perfil onBack={() => setScreen("inicio")} onCerrarSesion={cerrarSesion} />;
       default:
         return <Dashboard onNavigate={setScreen} />;
     }
