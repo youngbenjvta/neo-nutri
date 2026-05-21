@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { usePersistedState } from "./usePersistedState";
 import { useProgreso } from "./useProgreso";
+import { getAvatar, WarriorSVG } from "./avatars";
 
 // ============================================================
 //  NEO NUTRI — DASHBOARD (shonen pintado)
@@ -75,18 +76,15 @@ function MacroRow({ icon: Icon, label, v, max, tone }: { icon: React.ElementType
   );
 }
 
-function Avatar({ onClick }: { onClick?: () => void }) {
+function Avatar({ onClick, avatarId }: { onClick?: () => void; avatarId: string }) {
+  const a = getAvatar(avatarId);
   return (
     <div className="avatar" role="button" title="Personalizar avatar" onClick={onClick}>
-      <div className="avatar-aura" />
-      <div className="avatar-frame">
-        <svg viewBox="0 0 100 120" className="avatar-fig">
-          <circle cx="50" cy="36" r="19" fill="#1c1410" stroke="#f6e9c8" strokeWidth="2.5" />
-          <path d="M21 118 C21 80 30 63 50 63 C70 63 79 80 79 118 Z"
-            fill="#1c1410" stroke="#f6e9c8" strokeWidth="2.5" />
-          <path d="M50 17 L44 33 L56 33 Z" fill="#e8a13a" />
-          <path d="M40 35 q10 6 20 0" fill="none" stroke="#f6e9c8" strokeWidth="2" strokeLinecap="round" />
-        </svg>
+      <div className="avatar-aura" style={{ background: `radial-gradient(circle, ${a.aura}55 0%, ${a.aura}33 40%, transparent 70%)` }} />
+      <div className="avatar-frame" style={{ borderColor: a.aura }}>
+        <div style={{ width: "78%", height: "78%" }}>
+          <WarriorSVG aura={a.aura} hair={a.hair} />
+        </div>
       </div>
       <span className="avatar-edit">編集 · EDITAR</span>
     </div>
@@ -115,6 +113,9 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   // ¡Misma clave que Comida.tsx! Por eso comparten los datos.
   const [comidas] = usePersistedState<Comida[]>("comida.lista", COMIDAS_INICIAL);
   const { prog } = useProgreso();
+  // Leemos del MISMO sitio donde el Perfil guarda (claves compartidas)
+  const [nombre] = usePersistedState("perfil.nombre", "GUERRERO");
+  const [avatarId] = usePersistedState("perfil.avatar", "a1");
   const xpPct = (prog.xp / prog.xpMax) * 100;
   const go = (s: string) => onNavigate && onNavigate(s);
 
@@ -133,10 +134,10 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
           <span className="brand-jp">ネオニュートリ</span>
         </div>
 
-        <Avatar onClick={() => go("perfil")} />
+        <Avatar onClick={() => go("perfil")} avatarId={avatarId} />
 
         <div className="hero-text">
-          <p className="hero-hi">BIENVENIDO, <b>{d.warrior.name}</b></p>
+          <p className="hero-hi">BIENVENIDO, <b>{nombre || "GUERRERO"}</b></p>
           <p className="hero-sub">Cada repetición te acerca a tu mejor versión.</p>
           <button className="beast-btn" onClick={() => setBeast(!beast)}>
             <Flame size={16} /> {beast ? "¡MODO BESTIA!" : "MODO BESTIA"}
