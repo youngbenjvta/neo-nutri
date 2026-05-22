@@ -4,7 +4,8 @@ import { supabase } from "./supabaseClient";
 
 // ============================================================
 //  useDiarioNube — agua y pasos del usuario EN LA NUBE.
-//  Dato único por usuario (patrón del perfil).
+//  Se REINICIAN cada día: si la fecha guardada no es hoy,
+//  empezamos de cero (día nuevo).
 // ============================================================
 
 export type Diario = {
@@ -14,11 +15,15 @@ export type Diario = {
 
 const INICIAL: Diario = { agua: 0, pasos: 0 };
 
+// Fecha de hoy en formato "AAAA-MM-DD" (para comparar días)
+function hoyTexto(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
 export function useDiarioNube() {
   const [diario, setDiario] = useState<Diario>(INICIAL);
   const [cargando, setCargando] = useState(true);
 
-  // Cargar agua/pasos del usuario (o crear el registro si no existe)
   const cargar = useCallback(async () => {
     const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
@@ -32,11 +37,23 @@ export function useDiarioNube() {
       .eq("user_id", user.id)
       .maybeSingle();
 
+    const hoy = hoyTexto();
+
     if (data) {
-      setDiario({ agua: Number(data.agua) || 0, pasos: Number(data.pasos) || 0 });
+      // ¿La fecha guardada es de hoy?
+      if (data.fecha === hoy) {
+        // Mismo día: usamos los valores guardados
+        setDiario({ agua: Number(data.agua) || 0, pasos: Number(data.pasos) || 0 });
+      } else {
+        // Día nuevo: reiniciamos a cero y actualizamos la fecha
+        await supabase.from("diario").update({
+          agua: 0, pasos: 0, fecha: hoy, actualizado: new Date().toISOString(),
+        }).eq("user_id", user.id);
+        setDiario(INICIAL);
+      }
     } else {
-      // Crear registro inicial para este usuario
-      await supabase.from("diario").insert({ user_id: user.id, agua: 0, pasos: 0 });
+      // Primera vez: creamos el registro de hoy
+      await supabase.from("diario").insert({ user_id: user.id, agua: 0, pasos: 0, fecha: hoy });
       setDiario(INICIAL);
     }
     setCargando(false);
@@ -46,9 +63,9 @@ export function useDiarioNube() {
     cargar();
   }, [cargar]);
 
-  // Guardar un cambio (agua o pasos) en la nube
+  // Guardar un cambio (agua o pasos) en la nube, con la fecha de hoy
   async function actualizar(nuevo: Diario) {
-    setDiario(nuevo); // actualiza la pantalla al instante
+    setDiario(nuevo);
     const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
     if (user) {
@@ -56,6 +73,7 @@ export function useDiarioNube() {
         user_id: user.id,
         agua: nuevo.agua,
         pasos: nuevo.pasos,
+        fecha: hoyTexto(),
         actualizado: new Date().toISOString(),
       });
     }
