@@ -1,8 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, TrendingDown, Plus, Droplet, Footprints, Dumbbell } from "lucide-react";
+import { ChevronLeft, TrendingDown, Plus, Minus, Droplet, Footprints, Dumbbell } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { usePesosNube } from "./usePesosNube";
+import { useDiarioNube } from "./useDiarioNube";
+import { useProgreso } from "./useProgreso";
 
 // ============================================================
 //  NEO NUTRI — PROGRESO (shonen pintado)
@@ -14,13 +16,12 @@ type Punto = { dia: string; peso: number };
 
 const PERIODOS = ["SEMANA", "MES", "3 MESES", "AÑO"];
 
-// Barras de progreso (metas diarias)
-const BARRAS = [
-  { id: "entrenos", label: "Entrenamientos", icon: Dumbbell, v: 12, max: 20, unidad: "", tone: "#d23b2e" },
-  { id: "pasos", label: "Pasos diarios", icon: Footprints, v: 8532, max: 10000, unidad: "", tone: "#e8a13a" },
-  { id: "agua", label: "Agua", icon: Droplet, v: 2.1, max: 3, unidad: " L", tone: "#3f7d6e" },
-];
+// Metas diarias
+const META_AGUA = 8;      // vasos
+const META_PASOS = 10000; // pasos
+const META_ENTRENOS = 20; // entrenamientos
 
+// Barras de progreso (metas diarias)
 // Tooltip personalizado del gráfico (lo que aparece al pasar el dedo/mouse)
 function MiTooltip({ active, payload }: { active?: boolean; payload?: { value: number }[] }) {
   if (active && payload && payload.length) {
@@ -35,6 +36,8 @@ function MiTooltip({ active, payload }: { active?: boolean; payload?: { value: n
 
 export default function Progreso({ onBack }: { onBack?: () => void }) {
   const { pesos, cargando, agregar } = usePesosNube();
+  const { diario, actualizar } = useDiarioNube();
+  const { prog } = useProgreso();
   const [periodo, setPeriodo] = useState("MES");
   const [abrir, setAbrir] = useState(false);
   const [nuevoPeso, setNuevoPeso] = useState("");
@@ -138,20 +141,57 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
       <section className="panel">
         <h2 className="card-title">目 METAS DE HOY</h2>
         <div className="barras">
-          {BARRAS.map((b) => {
-            const pct = Math.min((b.v / b.max) * 100, 100);
-            return (
-              <div key={b.id} className="barra">
-                <div className="barra-head">
-                  <span className="barra-label"><b.icon size={15} style={{ color: b.tone }} /> {b.label}</span>
-                  <span className="barra-val">{b.v.toLocaleString()}{b.unidad} <em>/ {b.max.toLocaleString()}{b.unidad}</em></span>
-                </div>
-                <div className="barra-track">
-                  <div className="barra-fill" style={{ width: `${pct}%`, background: b.tone }} />
-                </div>
-              </div>
-            );
-          })}
+
+          {/* AGUA — con botones +/- */}
+          <div className="barra">
+            <div className="barra-head">
+              <span className="barra-label"><Droplet size={15} style={{ color: "#3f7d6e" }} /> Agua</span>
+              <span className="barra-val">{diario.agua} <em>/ {META_AGUA} vasos</em></span>
+            </div>
+            <div className="barra-track">
+              <div className="barra-fill" style={{ width: `${Math.min((diario.agua / META_AGUA) * 100, 100)}%`, background: "#3f7d6e" }} />
+            </div>
+            <div className="agua-ctrl">
+              <button onClick={() => actualizar({ ...diario, agua: Math.max(0, diario.agua - 1) })} aria-label="Quitar vaso">
+                <Minus size={16} />
+              </button>
+              <span>{diario.agua} vasos</span>
+              <button onClick={() => actualizar({ ...diario, agua: diario.agua + 1 })} aria-label="Añadir vaso">
+                <Plus size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* PASOS — campo editable */}
+          <div className="barra">
+            <div className="barra-head">
+              <span className="barra-label"><Footprints size={15} style={{ color: "#e8a13a" }} /> Pasos diarios</span>
+              <span className="barra-val">{diario.pasos.toLocaleString()} <em>/ {META_PASOS.toLocaleString()}</em></span>
+            </div>
+            <div className="barra-track">
+              <div className="barra-fill" style={{ width: `${Math.min((diario.pasos / META_PASOS) * 100, 100)}%`, background: "#e8a13a" }} />
+            </div>
+            <div className="pasos-ctrl">
+              <input
+                type="number"
+                placeholder="Anota tus pasos de hoy"
+                value={diario.pasos || ""}
+                onChange={(e) => actualizar({ ...diario, pasos: Number(e.target.value) || 0 })}
+              />
+            </div>
+          </div>
+
+          {/* ENTRENAMIENTOS — del progreso real (solo lectura) */}
+          <div className="barra">
+            <div className="barra-head">
+              <span className="barra-label"><Dumbbell size={15} style={{ color: "#d23b2e" }} /> Entrenamientos</span>
+              <span className="barra-val">{prog.entrenos} <em>/ {META_ENTRENOS}</em></span>
+            </div>
+            <div className="barra-track">
+              <div className="barra-fill" style={{ width: `${Math.min((prog.entrenos / META_ENTRENOS) * 100, 100)}%`, background: "#d23b2e" }} />
+            </div>
+          </div>
+
         </div>
       </section>
     </div>
@@ -182,7 +222,7 @@ const CSS = `
 
   .panel { position:relative; background:linear-gradient(160deg,var(--panel2),var(--panel));
     border:2px solid var(--ink); border-radius:8px; padding:16px; margin-bottom:14px;
-    box-shadow:4px 4px 0 #00000055; }
+    box-shadow:0 8px 24px #00000066; }
 
   /* PESO */
   .peso-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; }
@@ -226,4 +266,14 @@ const CSS = `
   .barra-val em { color:var(--mut); font-style:normal; font-size:13px; }
   .barra-track { height:12px; background:#1a0f0a; border:2px solid var(--ink); border-radius:3px; overflow:hidden; }
   .barra-fill { height:100%; transition:width .3s; }
+  .agua-ctrl { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:9px; }
+  .agua-ctrl button { width:36px; height:36px; border-radius:6px; cursor:pointer; color:var(--paper);
+    background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink);
+    display:flex; align-items:center; justify-content:center; transition:.12s; }
+  .agua-ctrl button:hover { border-color:var(--teal); color:var(--teal); }
+  .agua-ctrl span { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:var(--paper); min-width:80px; text-align:center; }
+  .pasos-ctrl { margin-top:9px; }
+  .pasos-ctrl input { width:100%; background:#1c1410; border:2px solid var(--ink); border-radius:6px;
+    padding:9px 11px; color:var(--paper); font-family:'Zen Kaku Gothic New'; font-size:14px; font-weight:700; outline:none; }
+  .pasos-ctrl input:focus { border-color:var(--amber); }
 `;
