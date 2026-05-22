@@ -63,10 +63,42 @@ export const ALIMENTOS: Alimento[] = [
   { id: "aguacate", nombre: "Aguacate", categoria: "Grasas y snacks", unidad: "unidad", kcalPorUnidad: 240 },
   { id: "aceite", nombre: "Aceite de oliva", categoria: "Grasas y snacks", unidad: "cda", kcalPorUnidad: 119 },
   { id: "nuez", nombre: "Nueces", categoria: "Grasas y snacks", unidad: "puñado", kcalPorUnidad: 185 },
+
+  // 🫓 LATINOS / TÍPICOS
+  { id: "arepa", nombre: "Arepa", categoria: "Latinos", unidad: "unidad", kcalPorUnidad: 220 },
+  { id: "empanada", nombre: "Empanada", categoria: "Latinos", unidad: "unidad", kcalPorUnidad: 290 },
+  { id: "frijoles", nombre: "Frijoles / porotos", categoria: "Latinos", unidad: "taza", kcalPorUnidad: 227 },
+  { id: "lentejas", nombre: "Lentejas", categoria: "Latinos", unidad: "taza", kcalPorUnidad: 230 },
+  { id: "arrozpollo", nombre: "Arroz con pollo", categoria: "Latinos", unidad: "plato", kcalPorUnidad: 480 },
+  { id: "platanofrito", nombre: "Plátano frito", categoria: "Latinos", unidad: "unidad", kcalPorUnidad: 150 },
+  { id: "completo", nombre: "Completo / hot dog", categoria: "Latinos", unidad: "unidad", kcalPorUnidad: 350 },
+  { id: "sopaipilla", nombre: "Sopaipilla", categoria: "Latinos", unidad: "unidad", kcalPorUnidad: 130 },
+  { id: "humita", nombre: "Humita", categoria: "Latinos", unidad: "unidad", kcalPorUnidad: 190 },
+  { id: "cazuela", nombre: "Cazuela", categoria: "Latinos", unidad: "plato", kcalPorUnidad: 350 },
+
+  // 🍔 COMIDA RÁPIDA
+  { id: "pizza", nombre: "Pizza (porción)", categoria: "Comida rápida", unidad: "porción", kcalPorUnidad: 285 },
+  { id: "hamburguesa", nombre: "Hamburguesa", categoria: "Comida rápida", unidad: "unidad", kcalPorUnidad: 540 },
+  { id: "papasfritas", nombre: "Papas fritas", categoria: "Comida rápida", unidad: "porción", kcalPorUnidad: 365 },
+  { id: "sandwich", nombre: "Sándwich", categoria: "Comida rápida", unidad: "unidad", kcalPorUnidad: 350 },
+  { id: "sushi", nombre: "Sushi (roll)", categoria: "Comida rápida", unidad: "roll", kcalPorUnidad: 255 },
+
+  // ☕ BEBIDAS
+  { id: "cafe", nombre: "Café con leche", categoria: "Bebidas", unidad: "taza", kcalPorUnidad: 70 },
+  { id: "cafenegro", nombre: "Café negro", categoria: "Bebidas", unidad: "taza", kcalPorUnidad: 5 },
+  { id: "gaseosa", nombre: "Gaseosa / bebida", categoria: "Bebidas", unidad: "vaso", kcalPorUnidad: 140 },
+  { id: "jugo", nombre: "Jugo natural", categoria: "Bebidas", unidad: "vaso", kcalPorUnidad: 110 },
+  { id: "batido", nombre: "Batido de proteína", categoria: "Bebidas", unidad: "vaso", kcalPorUnidad: 180 },
+
+  // 🍫 SNACKS DULCES
+  { id: "galletas", nombre: "Galletas", categoria: "Grasas y snacks", unidad: "unidad", kcalPorUnidad: 50 },
+  { id: "chocolate", nombre: "Chocolate", categoria: "Grasas y snacks", unidad: "barra", kcalPorUnidad: 230 },
+  { id: "barracereal", nombre: "Barra de cereal", categoria: "Grasas y snacks", unidad: "unidad", kcalPorUnidad: 120 },
+  { id: "helado", nombre: "Helado", categoria: "Grasas y snacks", unidad: "bola", kcalPorUnidad: 140 },
 ];
 
 // Categorías en orden, para los filtros
-export const CATEGORIAS = ["Proteínas", "Carbohidratos", "Frutas", "Verduras", "Lácteos", "Grasas y snacks"];
+export const CATEGORIAS = ["Proteínas", "Carbohidratos", "Latinos", "Comida rápida", "Frutas", "Verduras", "Lácteos", "Bebidas", "Grasas y snacks"];
 
 // Cantidades rápidas que se pueden elegir
 export const CANTIDADES = [0.5, 1, 1.5, 2, 3];
