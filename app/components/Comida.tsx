@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, Plus, Trash2, Flame, X, Search } from "lucide-react";
 import { useComidasNube } from "./useComidasNube";
 import { ALIMENTOS, CATEGORIAS, CANTIDADES, type Alimento } from "./alimentos";
+import { usePersistedState } from "./usePersistedState";
+import { calcularMetaKcal } from "./calcularMeta";
 
 // ============================================================
 //  NEO NUTRI — ALIMENTACIÓN (shonen pintado)
@@ -66,7 +68,19 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
   }, [comidas, cargando]);
 
   const totalKcal = comidas.reduce((suma, c) => suma + (Number(c.kcal) || 0), 0);
-  const META = 2600;
+  // Leemos los datos del perfil (sincronizados en localStorage) para la meta
+  const [perfilPeso] = usePersistedState("perfil.pesoMeta", "70");
+  const [perfilAltura] = usePersistedState("perfil.altura", "175");
+  const [perfilEdad] = usePersistedState("perfil.edad", "25");
+  const [perfilObjetivo] = usePersistedState("perfil.objetivo", "bajar");
+
+  // Meta de calorías calculada automáticamente según el perfil
+  const META = calcularMetaKcal({
+    peso: Number(perfilPeso),
+    altura: Number(perfilAltura),
+    edad: Number(perfilEdad),
+    objetivo: perfilObjetivo,
+  });
   const pct = Math.min((totalKcal / META) * 100, 100);
 
   const totalPlato = plato.reduce((s, p) => s + p.kcal, 0);

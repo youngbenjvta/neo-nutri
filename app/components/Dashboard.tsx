@@ -8,6 +8,7 @@ import { usePersistedState } from "./usePersistedState";
 import { useProgreso } from "./useProgreso";
 import { getAvatar, WarriorSVG } from "./avatars";
 import { useSonido } from "./useSonido";
+import { calcularMetaKcal } from "./calcularMeta";
 
 // ============================================================
 //  NEO NUTRI — DASHBOARD (shonen pintado)
@@ -135,6 +136,17 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   // Mismo historial que Progreso.tsx (clave compartida): el último es el peso actual
   const [historialPeso] = usePersistedState<Punto[]>("progreso.peso", PESO_INICIAL);
   const pesoActual = historialPeso.length ? historialPeso[historialPeso.length - 1].peso : 0;
+  // Datos del perfil para calcular la meta de calorías personalizada
+  const [perfilPeso] = usePersistedState("perfil.pesoMeta", "70");
+  const [perfilAltura] = usePersistedState("perfil.altura", "175");
+  const [perfilEdad] = usePersistedState("perfil.edad", "25");
+  const [perfilObjetivo] = usePersistedState("perfil.objetivo", "bajar");
+  const metaKcal = calcularMetaKcal({
+    peso: Number(perfilPeso),
+    altura: Number(perfilAltura),
+    edad: Number(perfilEdad),
+    objetivo: perfilObjetivo,
+  });
   const sonido = useSonido();
   const xpPct = (prog.xp / prog.xpMax) * 100;
   const go = (s: string) => onNavigate && onNavigate(s);
@@ -194,7 +206,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
       <section className="panel">
         <h2 className="card-title">食 MACROS DIARIAS</h2>
         <div className="macros">
-          <MacroRing kcal={kcalReal} kcalMax={d.macros.kcalMax} />
+          <MacroRing kcal={kcalReal} kcalMax={metaKcal} />
           <div className="macro-list">
             <MacroRow icon={Beef} label="Proteínas" v={d.macros.protein.v} max={d.macros.protein.max} tone="#d23b2e" />
             <MacroRow icon={Wheat} label="Carbohidratos" v={d.macros.carbs.v} max={d.macros.carbs.max} tone="#e8a13a" />
@@ -317,7 +329,8 @@ const CSS = `
   .xp-head { display:flex; align-items:center; gap:16px; margin-bottom:10px; }
   .lvl { text-align:center; background:linear-gradient(160deg,#3a241c,#241410); color:var(--gold);
     border:2px solid var(--gold); padding:6px 16px; border-radius:5px; }
-  .lvl-num { display:block; font-family:'Bebas Neue'; font-size:40px; line-height:.9; }
+  .lvl-num { display:block; font-family:'Bebas Neue'; font-size:40px; line-height:.9;
+    }
   .lvl-lbl { font-size:10px; letter-spacing:3px; color:var(--mut); }
   .xp-info { display:flex; flex-direction:column; }
   .xp-lbl { font-size:12px; color:var(--mut); letter-spacing:3px; font-weight:700; }
@@ -356,13 +369,13 @@ const CSS = `
   .menu-txt b { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:var(--paper); }
   .menu-txt em { font-size:12px; color:var(--mut); font-style:normal; }
   .menu-arrow { color:var(--mut); }
-  .add-btn { width:34px; height:34px; border-radius:5px; cursor:pointer; color:var(--paper);
+  .add-btn { width:34px; height:34px; border-radius:10px; cursor:pointer; color:#fff;
     background:linear-gradient(135deg,var(--red),#7a1d13); border:2px solid var(--ink);
     display:flex; align-items:center; justify-content:center; box-shadow:2px 2px 0 var(--ink); }
   .meals { display:flex; flex-direction:column; gap:9px; }
   .meal { display:flex; align-items:center; gap:11px; background:linear-gradient(160deg,#341f18,#26150f);
     border:2px solid var(--ink); border-radius:5px; padding:10px; }
-  .meal-tag { width:36px; height:36px; border-radius:5px; border:2px solid var(--gold);
+  .meal-tag { width:36px; height:36px; border-radius:10px; border:2px solid var(--gold);
     background:#241410; color:var(--gold); display:flex; align-items:center; justify-content:center;
     font-size:18px; font-weight:900; flex-shrink:0; }
   .meal-info { flex:1; display:flex; flex-direction:column; }
