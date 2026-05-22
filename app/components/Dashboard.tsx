@@ -9,6 +9,7 @@ import { useProgreso } from "./useProgreso";
 import { getAvatar, WarriorSVG } from "./avatars";
 import { useSonido } from "./useSonido";
 import { calcularMetaKcal } from "./calcularMeta";
+import { useRacha } from "./useRacha";
 
 // ============================================================
 //  NEO NUTRI — DASHBOARD (shonen pintado)
@@ -148,6 +149,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
     objetivo: perfilObjetivo,
   });
   const sonido = useSonido();
+  const { racha } = useRacha();
   const xpPct = (prog.xp / prog.xpMax) * 100;
   const go = (s: string) => onNavigate && onNavigate(s);
 
@@ -196,7 +198,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <div className="xp-bar"><div className="xp-fill" style={{ width: `${xpPct}%` }} /></div>
 
         <div className="stat-grid">
-          <div className="stat"><Flame size={18} /><b>{d.stats.streak} días</b><span>RACHA</span></div>
+          <div className="stat"><Flame size={18} /><b>{racha} días</b><span>RACHA</span></div>
           <div className="stat"><Dumbbell size={18} /><b>{prog.entrenos}</b><span>ENTRENOS</span></div>
           <div className="stat"><Activity size={18} /><b>{pesoActual} kg</b><span>PESO</span></div>
         </div>
