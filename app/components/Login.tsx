@@ -17,6 +17,11 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
 
+  // Verifica que el correo tenga formato válido (algo@algo.algo)
+  function correoValido(c: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.trim());
+  }
+
   async function enviar() {
     setError("");
     setMensaje("");
@@ -25,6 +30,10 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
     if (modo === "recuperar") {
       if (!email.trim()) {
         setError("Escribe tu correo para recuperar la contraseña.");
+        return;
+      }
+      if (!correoValido(email)) {
+        setError("Ese correo no parece válido. Revisa que esté bien escrito.");
         return;
       }
       setCargando(true);
@@ -44,11 +53,20 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
       return;
     }
 
-    // Login y registro sí necesitan contraseña
+    // Validaciones para login y registro
     if (!email.trim() || !pass.trim()) {
-      setError("Completa correo y contraseña.");
+      setError("Completa tu correo y contraseña.");
       return;
     }
+    if (!correoValido(email)) {
+      setError("Ese correo no parece válido. Revisa que esté bien escrito.");
+      return;
+    }
+    if (modo === "registro" && pass.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres.");
+      return;
+    }
+
     setCargando(true);
     try {
       if (modo === "login") {
