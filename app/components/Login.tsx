@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Flame, Mail, Lock } from "lucide-react";
+import { Flame, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { supabase } from "./supabaseClient";
 
 // ============================================================
@@ -12,6 +12,7 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
   const [modo, setModo] = useState<"login" | "registro">("login");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [verPass, setVerPass] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
@@ -90,12 +91,15 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
         <label className="auth-field">
           <Lock size={16} />
           <input
-            type="password"
+            type={verPass ? "text" : "password"}
             placeholder="Tu contraseña"
             value={pass}
             onChange={(e) => setPass(e.target.value)}
             autoComplete={modo === "login" ? "current-password" : "new-password"}
           />
+          <button type="button" className="ver-pass" onClick={() => setVerPass(!verPass)} aria-label="Mostrar u ocultar contraseña">
+            {verPass ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
         </label>
 
         {error && <p className="auth-error">{error}</p>}
@@ -153,6 +157,9 @@ const CSS = `
   .auth-field input { flex:1; background:none; border:none; outline:none; color:var(--paper);
     font-family:'Zen Kaku Gothic New'; font-size:15px; font-weight:700; }
   .auth-field:focus-within { border-color:var(--amber); }
+  .ver-pass { background:none; border:none; cursor:pointer; color:var(--mut); display:flex;
+    align-items:center; padding:0; flex-shrink:0; transition:.12s; }
+  .ver-pass:hover { color:var(--amber); }
 
   .auth-error { font-size:13px; color:#ff6b5e; background:#3a1410; border:2px solid #d23b2e;
     border-radius:6px; padding:9px 11px; margin-bottom:11px; }
