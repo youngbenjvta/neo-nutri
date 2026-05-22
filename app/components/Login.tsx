@@ -9,7 +9,7 @@ import { supabase } from "./supabaseClient";
 // ============================================================
 
 export default function Login({ onEntrar }: { onEntrar?: () => void }) {
-  const [modo, setModo] = useState<"login" | "registro">("login");
+  const [modo, setModo] = useState<"login" | "registro" | "recuperar">("login");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [verPass, setVerPass] = useState(false);
@@ -20,6 +20,31 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
   async function enviar() {
     setError("");
     setMensaje("");
+
+    // El modo recuperar solo necesita el correo (no contraseña)
+    if (modo === "recuperar") {
+      if (!email.trim()) {
+        setError("Escribe tu correo para recuperar la contraseña.");
+        return;
+      }
+      setCargando(true);
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/?recuperar=1`,
+        });
+        if (error) {
+          setError("No se pudo enviar el correo. Verifica el email.");
+        } else {
+          setMensaje("¡Listo! Revisa tu correo para restablecer tu contraseña.");
+        }
+      } catch {
+        setError("Ocurrió un error. Intenta de nuevo.");
+      }
+      setCargando(false);
+      return;
+    }
+
+    // Login y registro sí necesitan contraseña
     if (!email.trim() || !pass.trim()) {
       setError("Completa correo y contraseña.");
       return;
@@ -27,15 +52,13 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
     setCargando(true);
     try {
       if (modo === "login") {
-        // Iniciar sesión
         const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
         if (error) {
           setError("Correo o contraseña incorrectos.");
         } else {
-          onEntrar && onEntrar(); // ¡adentro!
+          onEntrar && onEntrar();
         }
       } else {
-        // Registrarse
         const { error } = await supabase.auth.signUp({ email, password: pass });
         if (error) {
           setError(error.message.includes("already") ? "Ese correo ya está registrado." : "No se pudo crear la cuenta.");
@@ -63,7 +86,9 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
         </div>
 
         <p className="auth-tagline">
-          {modo === "login" ? "Bienvenido de vuelta, guerrero." : "Únete a la batalla, guerrero."}
+          {modo === "login" ? "Bienvenido de vuelta, guerrero."
+            : modo === "registro" ? "Únete a la batalla, guerrero."
+            : "Recupera tu acceso, guerrero."}
         </p>
 
         {/* PESTAÑAS */}
@@ -88,31 +113,49 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
           />
         </label>
 
-        <label className="auth-field">
-          <Lock size={16} />
-          <input
-            type={verPass ? "text" : "password"}
-            placeholder="Tu contraseña"
-            value={pass}
-            onChange={(e) => setPass(e.target.value)}
-            autoComplete={modo === "login" ? "current-password" : "new-password"}
-          />
-          <button type="button" className="ver-pass" onClick={() => setVerPass(!verPass)} aria-label="Mostrar u ocultar contraseña">
-            {verPass ? <EyeOff size={16} /> : <Eye size={16} />}
-          </button>
-        </label>
+        {modo !== "recuperar" && (
+          <label className="auth-field">
+            <Lock size={16} />
+            <input
+              type={verPass ? "text" : "password"}
+              placeholder="Tu contraseña"
+              value={pass}
+              onChange={(e) => setPass(e.target.value)}
+              autoComplete={modo === "login" ? "current-password" : "new-password"}
+            />
+            <button type="button" className="ver-pass" onClick={() => setVerPass(!verPass)} aria-label="Mostrar u ocultar contraseña">
+              {verPass ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </label>
+        )}
 
         {error && <p className="auth-error">{error}</p>}
         {mensaje && <p className="auth-ok">{mensaje}</p>}
 
         <button className="auth-btn" onClick={enviar} disabled={cargando}>
-          {cargando ? "..." : modo === "login" ? "ENTRAR" : "CREAR CUENTA"}
+          {cargando ? "..." : modo === "login" ? "ENTRAR" : modo === "registro" ? "CREAR CUENTA" : "ENVIAR CORREO"}
         </button>
 
+        {/* Enlace de "olvidé mi contraseña" (solo en login) */}
+        {modo === "login" && (
+          <p className="auth-olvido">
+            <button onClick={() => { setModo("recuperar"); setError(""); setMensaje(""); }}>
+              ¿Olvidaste tu contraseña?
+            </button>
+          </p>
+        )}
+
         <p className="auth-switch">
-          {modo === "login" ? "¿No tienes cuenta? " : "¿Ya tienes cuenta? "}
-          <button onClick={() => { setModo(modo === "login" ? "registro" : "login"); setError(""); setMensaje(""); }}>
-            {modo === "login" ? "Créala aquí" : "Inicia sesión"}
+          {modo === "recuperar" ? "¿Recordaste tu contraseña? "
+            : modo === "login" ? "¿No tienes cuenta? "
+            : "¿Ya tienes cuenta? "}
+          <button onClick={() => {
+            setModo(modo === "login" ? "registro" : "login");
+            setError(""); setMensaje("");
+          }}>
+            {modo === "recuperar" ? "Volver a iniciar sesión"
+              : modo === "login" ? "Créala aquí"
+              : "Inicia sesión"}
           </button>
         </p>
       </div>
@@ -173,6 +216,10 @@ const CSS = `
   .auth-btn:disabled { opacity:.6; cursor:default; }
 
   .auth-switch { text-align:center; font-size:13px; color:var(--mut); margin-top:16px; }
+  .auth-olvido { text-align:center; margin-top:12px; }
+  .auth-olvido button { background:none; border:none; color:var(--mut); cursor:pointer;
+    font-family:'Zen Kaku Gothic New'; font-size:12px; text-decoration:underline; }
+  .auth-olvido button:hover { color:var(--amber); }
   .auth-switch button { background:none; border:none; color:var(--amber); cursor:pointer;
     font-family:'Zen Kaku Gothic New'; font-size:13px; font-weight:700; text-decoration:underline; }
 `;

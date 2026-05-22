@@ -11,6 +11,7 @@ import Comida from "./Comida";
 import Progreso from "./Progreso";
 import Logros from "./Logros";
 import Login from "./Login";
+import NuevaContrasena from "./NuevaContrasena";
 import { supabase } from "./supabaseClient";
 
 // ============================================================
@@ -47,14 +48,23 @@ export default function MainApp() {
   // Sesión del usuario: null = no logueado, objeto = logueado, undefined = aún verificando
   const [sesion, setSesion] = useState<object | null | undefined>(undefined);
 
+  // ¿El usuario llegó desde el enlace de recuperación de contraseña?
+  const [recuperando, setRecuperando] = useState(false);
+
   useEffect(() => {
+    // Detectar si venimos del enlace de recuperación (?recuperar=1 en la URL)
+    if (typeof window !== "undefined" && window.location.search.includes("recuperar=1")) {
+      setRecuperando(true);
+    }
     // Al cargar: revisar si ya hay sesión activa
     supabase.auth.getSession().then(({ data }) => {
       setSesion(data.session);
     });
     // Escuchar cambios de sesión (login / logout)
-    const { data: listener } = supabase.auth.onAuthStateChange((_evento, nuevaSesion) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((evento, nuevaSesion) => {
       setSesion(nuevaSesion);
+      // Si Supabase nos avisa que es recuperación, mostramos la pantalla
+      if (evento === "PASSWORD_RECOVERY") setRecuperando(true);
     });
     return () => listener.subscription.unsubscribe();
   }, []);
@@ -62,6 +72,14 @@ export default function MainApp() {
   async function cerrarSesion() {
     await supabase.auth.signOut();
     setScreen("inicio");
+  }
+
+  // Función para terminar la recuperación: limpia la URL y vuelve a la app
+  function terminarRecuperacion() {
+    setRecuperando(false);
+    if (typeof window !== "undefined") {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
   }
 
   // Mientras verifica la sesión, mostramos un cargando simple
@@ -72,6 +90,11 @@ export default function MainApp() {
         CARGANDO...
       </div>
     );
+  }
+
+  // Si venimos del enlace de recuperación, mostramos la pantalla de nueva contraseña
+  if (recuperando) {
+    return <NuevaContrasena onListo={terminarRecuperacion} />;
   }
 
   // Si NO hay sesión, mostramos el login
