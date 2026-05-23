@@ -24,27 +24,23 @@ const FRASES = [
 ];
 
 export default function YunsFlotante() {
-  // Posición del botón (esquina inferior derecha por defecto)
-  const [pos, setPos] = useState({ x: 0, y: 0 });
+  // Posición del botón. null = aún sin posicionar (usa esquina por defecto vía CSS)
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
   const [abierto, setAbierto] = useState(false);
   const [frase, setFrase] = useState(FRASES[0]);
-  const [listo, setListo] = useState(false);
 
   // Datos internos del arrastre
   const arrastrando = useRef(false);
   const movido = useRef(false);
   const inicio = useRef({ x: 0, y: 0, px: 0, py: 0 });
+  const esTactil = useRef(false); // evita el doble disparo touch+mouse en móvil
 
-  // Posición inicial: abajo a la derecha. Recupera la guardada si existe.
+  // Recupera la posición guardada si existe
   useEffect(() => {
-    const guardada = typeof window !== "undefined" ? localStorage.getItem("yuns.pos") : null;
-    if (guardada) {
-      try { setPos(JSON.parse(guardada)); }
-      catch { setPos({ x: window.innerWidth - 86, y: window.innerHeight - 170 }); }
-    } else {
-      setPos({ x: window.innerWidth - 86, y: window.innerHeight - 170 });
-    }
-    setListo(true);
+    try {
+      const guardada = localStorage.getItem("yuns.pos");
+      if (guardada) setPos(JSON.parse(guardada));
+    } catch { /* usa la esquina por defecto */ }
   }, []);
 
   function clamp(x: number, y: number) {
@@ -57,14 +53,14 @@ export default function YunsFlotante() {
   function onDown(clientX: number, clientY: number) {
     arrastrando.current = true;
     movido.current = false;
-    inicio.current = { x: clientX, y: clientY, px: pos.x, py: pos.y };
+    const base = pos || { x: window.innerWidth - 86, y: window.innerHeight - 170 };
+    inicio.current = { x: clientX, y: clientY, px: base.x, py: base.y };
   }
   // Movimiento del dedo/ratón
   function onMove(clientX: number, clientY: number) {
     if (!arrastrando.current) return;
     const dx = clientX - inicio.current.x;
     const dy = clientY - inicio.current.y;
-    // Si se movió más de 6px, es un arrastre (no un toque)
     if (Math.abs(dx) > 6 || Math.abs(dy) > 6) movido.current = true;
     setPos(clamp(inicio.current.px + dx, inicio.current.py + dy));
   }
@@ -73,31 +69,32 @@ export default function YunsFlotante() {
     if (!arrastrando.current) return;
     arrastrando.current = false;
     if (!movido.current) {
-      // Fue un toque: abrir/cerrar consejo con nueva frase
       if (!abierto) setFrase(FRASES[Math.floor(Math.random() * FRASES.length)]);
       setAbierto((a) => !a);
-    } else {
-      // Fue arrastre: guardar la posición
+    } else if (pos) {
       localStorage.setItem("yuns.pos", JSON.stringify(pos));
     }
   }
 
-  // Listeners globales para mouse (desktop)
+  // Listeners globales para mouse (solo desktop; en móvil se ignoran)
   useEffect(() => {
-    function mm(e: MouseEvent) { onMove(e.clientX, e.clientY); }
-    function mu() { onUp(); }
+    function mm(e: MouseEvent) { if (!esTactil.current) onMove(e.clientX, e.clientY); }
+    function mu() { if (!esTactil.current) onUp(); }
     window.addEventListener("mousemove", mm);
     window.addEventListener("mouseup", mu);
     return () => { window.removeEventListener("mousemove", mm); window.removeEventListener("mouseup", mu); };
   });
 
-  if (!listo) return null;
+  // Si no hay posición guardada, usa la esquina inferior derecha (CSS)
+  const estilo: React.CSSProperties = pos
+    ? { left: pos.x, top: pos.y }
+    : { right: 18, bottom: 90 };
 
-  // ¿La burbuja va a la izquierda o derecha del botón?
-  const burbujaIzq = pos.x > (typeof window !== "undefined" ? window.innerWidth / 2 : 200);
+  // ¿La burbuja va a la izquierda del botón? (si está en la mitad derecha)
+  const burbujaIzq = pos ? pos.x > 200 : true;
 
   return (
-    <div className="yunsflo-wrap" style={{ left: pos.x, top: pos.y }}>
+    <div className="yunsflo-wrap" style={estilo}>
       <style suppressHydrationWarning>{CSS}</style>
 
       {/* Burbuja de consejo */}
@@ -111,10 +108,10 @@ export default function YunsFlotante() {
       {/* Botón de Yuns */}
       <button
         className="yunsflo-btn"
-        onMouseDown={(e) => onDown(e.clientX, e.clientY)}
-        onTouchStart={(e) => { const t = e.touches[0]; onDown(t.clientX, t.clientY); }}
-        onTouchMove={(e) => { const t = e.touches[0]; onMove(t.clientX, t.clientY); }}
-        onTouchEnd={onUp}
+        onMouseDown={(e) => { if (!esTactil.current) onDown(e.clientX, e.clientY); }}
+        onTouchStart={(e) => { esTactil.current = true; const t = e.touches[0]; onDown(t.clientX, t.clientY); }}
+        onTouchMove={(e) => { e.preventDefault(); const t = e.touches[0]; onMove(t.clientX, t.clientY); }}
+        onTouchEnd={(e) => { e.preventDefault(); onUp(); }}
         aria-label="Yuns, tu mascota"
       >
         <YunsSVG size={54} />
