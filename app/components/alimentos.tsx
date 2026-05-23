@@ -95,10 +95,72 @@ export const ALIMENTOS: Alimento[] = [
   { id: "chocolate", nombre: "Chocolate", categoria: "Grasas y snacks", unidad: "barra", kcalPorUnidad: 230 },
   { id: "barracereal", nombre: "Barra de cereal", categoria: "Grasas y snacks", unidad: "unidad", kcalPorUnidad: 120 },
   { id: "helado", nombre: "Helado", categoria: "Grasas y snacks", unidad: "bola", kcalPorUnidad: 140 },
+
+  // 🥤 MÁS BEBIDAS (café, té, etc.)
+  { id: "te", nombre: "Té (sin azúcar)", categoria: "Bebidas", unidad: "taza", kcalPorUnidad: 2 },
+  { id: "teleche", nombre: "Té con leche y azúcar", categoria: "Bebidas", unidad: "taza", kcalPorUnidad: 60 },
+  { id: "capuchino", nombre: "Capuchino", categoria: "Bebidas", unidad: "taza", kcalPorUnidad: 120 },
+  { id: "agua", nombre: "Agua", categoria: "Bebidas", unidad: "vaso", kcalPorUnidad: 0 },
+  { id: "cerveza", nombre: "Cerveza", categoria: "Bebidas", unidad: "lata", kcalPorUnidad: 150 },
+  { id: "vino", nombre: "Vino", categoria: "Bebidas", unidad: "copa", kcalPorUnidad: 125 },
+  { id: "energetica", nombre: "Bebida energética", categoria: "Bebidas", unidad: "lata", kcalPorUnidad: 160 },
+  { id: "limonada", nombre: "Limonada", categoria: "Bebidas", unidad: "vaso", kcalPorUnidad: 99 },
+  { id: "lechechoco", nombre: "Leche chocolatada", categoria: "Bebidas", unidad: "vaso", kcalPorUnidad: 190 },
+  { id: "smoothie", nombre: "Smoothie de frutas", categoria: "Bebidas", unidad: "vaso", kcalPorUnidad: 150 },
+
+  // 🧈 ADEREZOS Y CONDIMENTOS
+  { id: "mantequilla", nombre: "Mantequilla", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 102 },
+  { id: "margarina", nombre: "Margarina", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 75 },
+  { id: "mayonesa", nombre: "Mayonesa", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 94 },
+  { id: "ketchup", nombre: "Ketchup", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 19 },
+  { id: "mostaza", nombre: "Mostaza", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 10 },
+  { id: "salsatomate", nombre: "Salsa de tomate", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 15 },
+  { id: "salsasoya", nombre: "Salsa de soya", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 9 },
+  { id: "aderezocesar", nombre: "Aderezo César", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 80 },
+  { id: "vinagreta", nombre: "Vinagreta", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 45 },
+  { id: "miel", nombre: "Miel", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 64 },
+  { id: "mermelada", nombre: "Mermelada", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 56 },
+  { id: "azucar", nombre: "Azúcar", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 48 },
+  { id: "crema", nombre: "Crema de leche", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 52 },
+  { id: "guacamole", nombre: "Guacamole", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 45 },
+  { id: "humus", nombre: "Hummus", categoria: "Aderezos", unidad: "cda", kcalPorUnidad: 35 },
+
+  // 🍞 PANADERÍA Y DULCES
+  { id: "croissant", nombre: "Croissant", categoria: "Panadería y dulces", unidad: "unidad", kcalPorUnidad: 230 },
+  { id: "panintegral", nombre: "Pan integral", categoria: "Panadería y dulces", unidad: "rebanada", kcalPorUnidad: 70 },
+  { id: "bagel", nombre: "Bagel", categoria: "Panadería y dulces", unidad: "unidad", kcalPorUnidad: 250 },
+  { id: "panqueque", nombre: "Panqueque", categoria: "Panadería y dulces", unidad: "unidad", kcalPorUnidad: 90 },
+  { id: "waffle", nombre: "Waffle", categoria: "Panadería y dulces", unidad: "unidad", kcalPorUnidad: 220 },
+  { id: "dona", nombre: "Dona", categoria: "Panadería y dulces", unidad: "unidad", kcalPorUnidad: 250 },
+  { id: "muffin", nombre: "Muffin", categoria: "Panadería y dulces", unidad: "unidad", kcalPorUnidad: 280 },
+  { id: "queque", nombre: "Queque / bizcocho", categoria: "Panadería y dulces", unidad: "rebanada", kcalPorUnidad: 240 },
+  { id: "brownie", nombre: "Brownie", categoria: "Panadería y dulces", unidad: "unidad", kcalPorUnidad: 200 },
+  { id: "galletaavena", nombre: "Galleta de avena", categoria: "Panadería y dulces", unidad: "unidad", kcalPorUnidad: 80 },
+
+  // 🍗 MÁS PROTEÍNAS
+  { id: "pavo", nombre: "Pavo", categoria: "Proteínas", unidad: "100g", kcalPorUnidad: 135 },
+  { id: "camaron", nombre: "Camarones", categoria: "Proteínas", unidad: "100g", kcalPorUnidad: 99 },
+  { id: "tofu", nombre: "Tofu", categoria: "Proteínas", unidad: "100g", kcalPorUnidad: 76 },
+  { id: "jamon", nombre: "Jamón", categoria: "Proteínas", unidad: "rebanada", kcalPorUnidad: 46 },
+  { id: "salchicha", nombre: "Salchicha", categoria: "Proteínas", unidad: "unidad", kcalPorUnidad: 150 },
+  { id: "tocino", nombre: "Tocino", categoria: "Proteínas", unidad: "tira", kcalPorUnidad: 43 },
+
+  // 🥦 MÁS VERDURAS Y FRUTAS
+  { id: "espinaca", nombre: "Espinaca", categoria: "Verduras", unidad: "taza", kcalPorUnidad: 7 },
+  { id: "champinon", nombre: "Champiñones", categoria: "Verduras", unidad: "taza", kcalPorUnidad: 15 },
+  { id: "palta", nombre: "Palta / aguacate", categoria: "Frutas", unidad: "unidad", kcalPorUnidad: 240 },
+  { id: "pina", nombre: "Piña", categoria: "Frutas", unidad: "taza", kcalPorUnidad: 82 },
+  { id: "mango", nombre: "Mango", categoria: "Frutas", unidad: "unidad", kcalPorUnidad: 135 },
+  { id: "sandia", nombre: "Sandía", categoria: "Frutas", unidad: "taza", kcalPorUnidad: 46 },
+
+  // 🥛 MÁS LÁCTEOS
+  { id: "quesocrema", nombre: "Queso crema", categoria: "Lácteos", unidad: "cda", kcalPorUnidad: 50 },
+  { id: "yogurnatural", nombre: "Yogur natural", categoria: "Lácteos", unidad: "taza", kcalPorUnidad: 100 },
+  { id: "lechedesc", nombre: "Leche descremada", categoria: "Lácteos", unidad: "taza", kcalPorUnidad: 90 },
 ];
 
 // Categorías en orden, para los filtros
-export const CATEGORIAS = ["Proteínas", "Carbohidratos", "Latinos", "Comida rápida", "Frutas", "Verduras", "Lácteos", "Bebidas", "Grasas y snacks"];
+export const CATEGORIAS = ["Proteínas", "Carbohidratos", "Latinos", "Comida rápida", "Frutas", "Verduras", "Lácteos", "Bebidas", "Panadería y dulces", "Aderezos", "Grasas y snacks"];
 
 // Cantidades rápidas que se pueden elegir
 export const CANTIDADES = [0.5, 1, 1.5, 2, 3];

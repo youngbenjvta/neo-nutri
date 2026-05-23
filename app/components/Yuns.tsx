@@ -148,3 +148,21 @@ const CSS = `
   .yuns-hola { font-family:'Bebas Neue'; font-size:14px; letter-spacing:2px; color:#e8a13a; margin-bottom:3px; }
   .yuns-frase { font-size:13px; font-weight:700; color:#f3e6cd; line-height:1.35; }
 `;
+
+// Versión COMPACTA de Yuns con un consejo fijo (para otras pantallas)
+export function YunsTip({ consejo }: { consejo: string }) {
+  return (
+    <div className="yunstip">
+      <style suppressHydrationWarning>{TIP_CSS}</style>
+      <YunsSVG size={52} />
+      <p className="yunstip-txt">{consejo}</p>
+    </div>
+  );
+}
+
+const TIP_CSS = `
+  .yunstip { display:flex; align-items:center; gap:10px;
+    background:linear-gradient(160deg,#32201a,#2a1812); border:2px solid #0d0805; border-radius:8px;
+    padding:10px 12px; margin-bottom:14px; box-shadow:3px 3px 0 #00000044; }
+  .yunstip .yunstip-txt { flex:1; font-size:12px; font-weight:700; color:#f3e6cd; line-height:1.35; }
+`;

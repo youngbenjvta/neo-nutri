@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Dumbbell, Flame } from "lucide-react";
 import { useProgreso, XP_POR_ENTRENO } from "./useProgreso";
 import { useSonido } from "./useSonido";
+import { YunsTip } from "./Yuns";
 
 // ============================================================
 //  NEO NUTRI — RUTINAS (shonen pintado)
@@ -134,6 +135,8 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
         <span className="top-jp">ルーティン</span>
       </header>
 
+      <YunsTip consejo="¡Calienta antes de entrenar y respeta tu técnica, guerrero! 💪" />
+
       {/* PESTAÑAS DE NIVEL */}
       <div className="levels">
         {NIVELES.map((n) => (
@@ -184,7 +187,7 @@ const CSS = `
   }
   .top { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
   .back { width:38px; height:38px; border-radius:6px; border:2px solid var(--ink);
-    background:linear-gradient(160deg,#341f18,#26150f); color:var(--paper);
+    background:#241410; color:var(--paper);
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
   .top-title { font-family:'Bebas Neue'; font-size:30px; letter-spacing:2px; color:var(--paper); flex:1; }
   .top-jp { font-size:12px; color:var(--mut); letter-spacing:2px; }
@@ -203,7 +206,7 @@ const CSS = `
   .cards { display:flex; flex-direction:column; gap:12px; }
   .rutina-card { display:flex; align-items:center; gap:0; width:100%; cursor:pointer; text-align:left;
     background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid; border-radius:8px;
-    overflow:hidden; box-shadow:4px 4px 0 #00000055; transition:.12s; padding:0; }
+    overflow:hidden; box-shadow:0 8px 24px #00000066; transition:.12s; padding:0; }
   .rutina-card:hover { transform:translateX(3px); }
   .rutina-bar { width:7px; align-self:stretch; flex-shrink:0; }
   .rutina-info { flex:1; padding:14px; }
