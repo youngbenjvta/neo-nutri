@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { ChevronLeft, Lock, Dumbbell, Flame, Salad, Zap, Scale, Trophy } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useProgreso } from "./useProgreso";
@@ -41,6 +41,12 @@ export default function Logros({ onBack }: { onBack?: () => void }) {
   ];
 
   const desbloqueados = logros.filter((l) => l.valor >= l.meta).length;
+
+  // Guardamos el conteo para que el guerrero evolutivo del Perfil lo use
+  const [, setLogrosCount] = usePersistedState("logros.desbloqueados", 0);
+  useEffect(() => {
+    setLogrosCount(desbloqueados);
+  }, [desbloqueados, setLogrosCount]);
 
   return (
     <div className="app">
@@ -114,14 +120,14 @@ const CSS = `
   }
   .top { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
   .back { width:38px; height:38px; border-radius:6px; border:2px solid var(--ink);
-    background:linear-gradient(160deg,#341f18,#26150f); color:var(--paper);
+    background:#241410; color:var(--paper);
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
   .top-title { font-family:'Bebas Neue'; font-size:30px; letter-spacing:2px; color:var(--paper); flex:1; }
   .top-jp { font-size:12px; color:var(--mut); letter-spacing:2px; }
 
   .panel { position:relative; background:linear-gradient(160deg,var(--panel2),var(--panel));
     border:2px solid var(--ink); border-radius:8px; padding:16px; margin-bottom:14px;
-    box-shadow:4px 4px 0 #00000055; }
+    box-shadow:0 8px 24px #00000066; }
 
   .resumen { display:flex; align-items:center; gap:14px; }
   .resumen svg { color:var(--gold); flex-shrink:0; }
@@ -132,10 +138,10 @@ const CSS = `
     border-bottom:3px solid var(--red); padding-bottom:5px; margin-bottom:16px; display:inline-block; }
 
   .medallas { display:flex; flex-direction:column; gap:11px; }
-  .medalla { display:flex; align-items:center; gap:13px; background:linear-gradient(160deg,#2a1810,#231410);
+  .medalla { display:flex; align-items:center; gap:13px; background:linear-gradient(160deg,#341f18,#26150f);
     border:2px solid var(--ink); border-radius:8px; padding:13px; opacity:.7; transition:.15s; }
-  .medalla.on { opacity:1; background:linear-gradient(160deg,#341f18,#281610); box-shadow:3px 3px 0 #00000044; }
-  .medalla-ic { width:48px; height:48px; border-radius:8px; border:2px solid; background:#1c1410;
+  .medalla.on { opacity:1; background:linear-gradient(160deg,#3a241c,#2a1812); box-shadow:3px 3px 0 #00000044; }
+  .medalla-ic { width:48px; height:48px; border-radius:8px; border:2px solid; background:#241410;
     display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .medalla-info { flex:1; display:flex; flex-direction:column; gap:3px; min-width:0; }
   .medalla-info b { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:var(--paper); }

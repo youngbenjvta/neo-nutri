@@ -80,15 +80,19 @@ function MacroRow({ icon: Icon, label, v, max, tone }: { icon: React.ElementType
   );
 }
 
-function Avatar({ onClick, avatarId }: { onClick?: () => void; avatarId: string }) {
+function Avatar({ onClick, avatarId, foto }: { onClick?: () => void; avatarId: string; foto?: string }) {
   const a = getAvatar(avatarId);
   return (
     <div className="avatar" role="button" title="Personalizar avatar" onClick={onClick}>
       <div className="avatar-aura" style={{ background: `radial-gradient(circle, ${a.aura}55 0%, ${a.aura}33 40%, transparent 70%)` }} />
       <div className="avatar-frame" style={{ borderColor: a.aura }}>
-        <div style={{ width: "78%", height: "78%" }}>
-          <WarriorSVG aura={a.aura} hair={a.hair} />
-        </div>
+        {foto ? (
+          <img src={foto} alt="Tu foto" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }} />
+        ) : (
+          <div style={{ width: "78%", height: "78%" }}>
+            <WarriorSVG aura={a.aura} hair={a.hair} />
+          </div>
+        )}
       </div>
       <span className="avatar-edit">編集 · EDITAR</span>
     </div>
@@ -135,6 +139,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   // Leemos del MISMO sitio donde el Perfil guarda (claves compartidas)
   const [nombre] = usePersistedState("perfil.nombre", "GUERRERO");
   const [avatarId] = usePersistedState("perfil.avatar", "a1");
+  const [fotoPerfil] = usePersistedState("perfil.foto", "");
   // Mismo historial que Progreso.tsx (clave compartida): el último es el peso actual
   const [historialPeso] = usePersistedState<Punto[]>("progreso.peso", PESO_INICIAL);
   const pesoActual = historialPeso.length ? historialPeso[historialPeso.length - 1].peso : 0;
@@ -172,7 +177,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
           </button>
         </div>
 
-        <Avatar onClick={() => go("perfil")} avatarId={avatarId} />
+        <Avatar onClick={() => go("perfil")} avatarId={avatarId} foto={fotoPerfil} />
 
         <div className="hero-text">
           <p className="hero-hi">BIENVENIDO, <b>{nombre || "GUERRERO"}</b></p>
