@@ -162,6 +162,18 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   // Calorías reales = suma de las comidas registradas
   const kcalReal = comidas.reduce((sum, c) => sum + (Number(c.kcal) || 0), 0);
 
+  // Macros estimados desde las calorías (proporción 30% prote / 45% carbos / 25% grasa)
+  // Proteína y carbos = 4 kcal/g, grasa = 9 kcal/g
+  function macrosDesde(kcal: number) {
+    return {
+      protein: Math.round((kcal * 0.30) / 4),
+      carbs: Math.round((kcal * 0.45) / 4),
+      fats: Math.round((kcal * 0.25) / 9),
+    };
+  }
+  const macrosReales = macrosDesde(kcalReal); // lo que llevas hoy
+  const macrosMeta = macrosDesde(metaKcal);   // tu meta diaria
+
   return (
     <div className={`app ${beast ? "beast" : ""}`}>
       <style suppressHydrationWarning>{CSS}</style>
@@ -219,9 +231,9 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <div className="macros">
           <MacroRing kcal={kcalReal} kcalMax={metaKcal} />
           <div className="macro-list">
-            <MacroRow icon={Beef} label="Proteínas" v={d.macros.protein.v} max={d.macros.protein.max} tone="#d23b2e" />
-            <MacroRow icon={Wheat} label="Carbohidratos" v={d.macros.carbs.v} max={d.macros.carbs.max} tone="#e8a13a" />
-            <MacroRow icon={Droplet} label="Grasas" v={d.macros.fats.v} max={d.macros.fats.max} tone="#3f7d6e" />
+            <MacroRow icon={Beef} label="Proteínas" v={macrosReales.protein} max={macrosMeta.protein} tone="#d23b2e" />
+            <MacroRow icon={Wheat} label="Carbohidratos" v={macrosReales.carbs} max={macrosMeta.carbs} tone="#e8a13a" />
+            <MacroRow icon={Droplet} label="Grasas" v={macrosReales.fats} max={macrosMeta.fats} tone="#3f7d6e" />
           </div>
         </div>
       </section>

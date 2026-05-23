@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Flame, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { supabase } from "./supabaseClient";
+import { YunsSVG } from "./Yuns";
 
 // ============================================================
 //  NEO NUTRI — LOGIN / REGISTRO (shonen pintado)
@@ -101,6 +102,16 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
           <Flame size={36} className="auth-flame" />
           <h1 className="auth-brand">NEO NUTRI</h1>
           <span className="auth-jp">ネオニュートリ</span>
+        </div>
+
+        {/* YUNS te da la bienvenida */}
+        <div className="auth-yuns">
+          <YunsSVG size={70} />
+          <div className="auth-yuns-bocadillo">
+            {modo === "login" ? "¡Bienvenido de vuelta! Vamos a entrenar 🔥"
+              : modo === "registro" ? "¡Hola! Soy Yuns. Únete a la batalla 🦊"
+              : "Tranquilo, recuperemos tu acceso juntos."}
+          </div>
         </div>
 
         <p className="auth-tagline">
@@ -205,6 +216,10 @@ const CSS = `
     text-shadow:3px 3px 0 var(--red); line-height:1; margin-top:4px; }
   .auth-jp { font-size:11px; color:var(--mut); letter-spacing:3px; }
   .auth-tagline { text-align:center; font-size:13px; color:var(--mut); margin:10px 0 20px; }
+  .auth-yuns { display:flex; align-items:center; gap:10px; margin:14px 0 4px;
+    background:#1c1410; border:2px solid var(--ink); border-radius:10px; padding:10px; }
+  .auth-yuns-bocadillo { flex:1; font-size:12px; font-weight:700; color:var(--paper); line-height:1.35;
+    text-align:left; }
 
   .auth-tabs { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:18px; }
   .auth-tab { font-family:'Bebas Neue'; font-size:14px; letter-spacing:1px; padding:10px 4px;
