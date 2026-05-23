@@ -5,7 +5,6 @@ import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianG
 import { usePesosNube } from "./usePesosNube";
 import { useDiarioNube } from "./useDiarioNube";
 import { useProgreso } from "./useProgreso";
-import { YunsTip } from "./Yuns";
 
 // ============================================================
 //  NEO NUTRI — PROGRESO (shonen pintado)
@@ -84,7 +83,6 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
         <span className="top-jp">進捗</span>
       </header>
 
-      <YunsTip consejo="La constancia es tu mejor arma. ¡Registra tu peso y metas cada día! 📈" />
 
       {/* GRÁFICO DE PESO */}
       <section className="panel">

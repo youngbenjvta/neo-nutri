@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { ChevronLeft, Plus, Trash2, Flame, X, Search } from "lucide-react";
 import { useComidasNube } from "./useComidasNube";
 import { ALIMENTOS, CATEGORIAS, CANTIDADES, type Alimento } from "./alimentos";
-import { YunsTip } from "./Yuns";
 import { usePersistedState } from "./usePersistedState";
 import { calcularMetaKcal } from "./calcularMeta";
 
@@ -138,7 +137,6 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
         <span className="top-jp">食事</span>
       </header>
 
-      <YunsTip consejo="Registra todo lo que comes, ¡hasta el café! Cada dato cuenta. 🦊" />
 
       {/* RESUMEN DE CALORÍAS */}
       <section className="panel resumen">

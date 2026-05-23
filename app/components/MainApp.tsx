@@ -12,6 +12,7 @@ import Progreso from "./Progreso";
 import Logros from "./Logros";
 import Login from "./Login";
 import NuevaContrasena from "./NuevaContrasena";
+import YunsFlotante from "./YunsFlotante";
 import { supabase } from "./supabaseClient";
 
 // ============================================================
@@ -147,6 +148,9 @@ export default function MainApp() {
           </button>
         ))}
       </nav>
+
+      {/* Yuns flotante: presente en toda la app */}
+      <YunsFlotante />
     </div>
   );
 }

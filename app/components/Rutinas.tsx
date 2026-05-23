@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Dumbbell, Flame } from "lucide-react";
 import { useProgreso, XP_POR_ENTRENO } from "./useProgreso";
 import { useSonido } from "./useSonido";
-import { YunsTip } from "./Yuns";
 
 // ============================================================
 //  NEO NUTRI — RUTINAS (shonen pintado)
@@ -135,7 +134,6 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
         <span className="top-jp">ルーティン</span>
       </header>
 
-      <YunsTip consejo="¡Calienta antes de entrenar y respeta tu técnica, guerrero! 💪" />
 
       {/* PESTAÑAS DE NIVEL */}
       <div className="levels">
