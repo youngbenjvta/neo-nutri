@@ -10,6 +10,7 @@ import { getAvatar, WarriorSVG } from "./avatars";
 import { useSonido } from "./useSonido";
 import { calcularMetaKcal } from "./calcularMeta";
 import { useRacha } from "./useRacha";
+import Yuns from "./Yuns";
 
 // ============================================================
 //  NEO NUTRI — DASHBOARD (shonen pintado)
@@ -181,6 +182,9 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
           </button>
         </div>
       </header>
+
+      {/* YUNS — la mascota que te saluda */}
+      <Yuns nombre={nombre} />
 
       {/* PROGRESO */}
       <section className="panel">
