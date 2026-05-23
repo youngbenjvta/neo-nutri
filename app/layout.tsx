@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "Neo Nutri",
-  description: "App de nutrición y progreso",
+  title: "NUT-KAIZEN",
+  description: "Tu app de nutrición y entrenamiento. Mejora continua, un día a la vez.",
 };
 
 export default function RootLayout({

@@ -13,7 +13,7 @@ import { useRacha } from "./useRacha";
 import Yuns from "./Yuns";
 
 // ============================================================
-//  NEO NUTRI — DASHBOARD (shonen pintado)
+//  NUT-KAIZEN — DASHBOARD (shonen pintado)
 //  Recibe onNavigate para cambiar de pantalla.
 // ============================================================
 
@@ -182,8 +182,8 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
       <header className="hero panel">
         <div className="speedlines" />
         <div className="hero-top">
-          <h1 className="brand">NEO NUTRI</h1>
-          <span className="brand-jp">ネオニュートリ</span>
+          <h1 className="brand">NUT-KAIZEN</h1>
+          <span className="brand-jp">改善 · KAIZEN</span>
           <button className="mute-btn" onClick={sonido.toggleMudo} aria-label="Silenciar" title="Silenciar sonidos">
             {sonido.mudo ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </button>

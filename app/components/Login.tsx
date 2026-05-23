@@ -5,7 +5,7 @@ import { supabase } from "./supabaseClient";
 import { YunsSVG } from "./Yuns";
 
 // ============================================================
-//  NEO NUTRI — LOGIN / REGISTRO (shonen pintado)
+//  NUT-KAIZEN — LOGIN / REGISTRO (shonen pintado)
 //  Inicia sesión o crea cuenta con Supabase Auth.
 // ============================================================
 
@@ -100,8 +100,8 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
         {/* LOGO */}
         <div className="auth-logo">
           <Flame size={36} className="auth-flame" />
-          <h1 className="auth-brand">NEO NUTRI</h1>
-          <span className="auth-jp">ネオニュートリ</span>
+          <h1 className="auth-brand">NUT-KAIZEN</h1>
+          <span className="auth-jp">改善 · KAIZEN</span>
         </div>
 
         {/* YUNS te da la bienvenida */}
