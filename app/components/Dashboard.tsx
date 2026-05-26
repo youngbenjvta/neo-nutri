@@ -11,6 +11,7 @@ import { useSonido } from "./useSonido";
 import { calcularMetaKcal } from "./calcularMeta";
 import { useRacha } from "./useRacha";
 import Yuns from "./Yuns";
+import { calcularIMC } from "./calcularIMC";
 
 // ============================================================
 //  NUT-KAIZEN — DASHBOARD (shonen pintado)
@@ -154,6 +155,8 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
     edad: Number(perfilEdad),
     objetivo: perfilObjetivo,
   });
+  // IMC del usuario (guía orientativa) según peso actual y altura
+  const imc = calcularIMC(Number(perfilPeso), Number(perfilAltura));
   const sonido = useSonido();
   const { racha } = useRacha();
   const xpPct = (prog.xp / prog.xpMax) * 100;
@@ -224,6 +227,24 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
           <div className="stat"><Activity size={18} /><b>{pesoActual} kg</b><span>PESO</span></div>
         </div>
       </section>
+
+      {/* IMC (guía orientativa) */}
+      {imc && (
+        <section className="panel">
+          <h2 className="card-title">体 TU IMC</h2>
+          <div className="imc-row">
+            <div className="imc-num" style={{ color: imc.color }}>
+              <b>{imc.imc}</b>
+              <span style={{ color: imc.color }}>{imc.categoria}</span>
+            </div>
+            <div className="imc-info">
+              <p className="imc-ideal">Peso saludable para tu altura: <b>{imc.pesoIdealMin}–{imc.pesoIdealMax} kg</b></p>
+              <p className="imc-msg">{imc.mensaje}</p>
+            </div>
+          </div>
+          <p className="imc-nota">El IMC es solo una guía general, no un diagnóstico médico.</p>
+        </section>
+      )}
 
       {/* MACROS */}
       <section className="panel">
@@ -362,6 +383,15 @@ const CSS = `
   .xp-fill { height:100%; background:
       repeating-linear-gradient(45deg, var(--amber) 0 7px, var(--red) 7px 14px); }
   .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-top:14px; }
+  .imc-row { display:flex; align-items:center; gap:16px; }
+  .imc-num { text-align:center; flex-shrink:0; min-width:84px; }
+  .imc-num b { display:block; font-family:'Bebas Neue'; font-size:42px; line-height:.9; }
+  .imc-num span { font-size:11px; font-weight:700; letter-spacing:1px; }
+  .imc-info { flex:1; }
+  .imc-ideal { font-size:13px; color:var(--txt); margin-bottom:6px; }
+  .imc-ideal b { color:var(--amber); }
+  .imc-msg { font-size:12px; color:var(--mut); font-weight:500; line-height:1.4; }
+  .imc-nota { font-size:10px; color:var(--mut); margin-top:10px; font-style:italic; opacity:.8; }
   .stat { background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink); border-radius:5px;
     padding:11px 6px; text-align:center; }
   .stat svg { color:var(--amber); }

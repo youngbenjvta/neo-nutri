@@ -1,20 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, TrendingDown, Plus, Minus, Droplet, Footprints, Dumbbell } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid, ReferenceLine } from "recharts";
 import { usePesosNube } from "./usePesosNube";
 import { useDiarioNube } from "./useDiarioNube";
 import { useProgreso } from "./useProgreso";
+import { usePersistedState } from "./usePersistedState";
+import { calcularIMC } from "./calcularIMC";
 
 // ============================================================
-//  NEO NUTRI — PROGRESO (shonen pintado)
+//  NUT-KAIZEN — PROGRESO (shonen pintado)
 //  Gráfico de peso (recharts) + barras de progreso.
 //  El historial de peso se guarda (persistencia).
 // ============================================================
 
 type Punto = { dia: string; peso: number };
 
-const PERIODOS = ["SEMANA", "MES", "3 MESES", "AÑO"];
 
 // Metas diarias
 const META_AGUA = 8;      // vasos
@@ -38,29 +39,67 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
   const { pesos, cargando, agregar } = usePesosNube();
   const { diario, actualizar } = useDiarioNube();
   const { prog } = useProgreso();
-  const [periodo, setPeriodo] = useState("MES");
   const [abrir, setAbrir] = useState(false);
   const [nuevoPeso, setNuevoPeso] = useState("");
 
-  // Convertimos los pesos de la nube al formato que usa el gráfico {dia, peso}.
-  // El "dia" es solo la posición en la lista (1, 2, 3...) para el eje X.
-  const historial: Punto[] = pesos.map((p, i) => ({ dia: String(i + 1), peso: p.peso }));
+  // Datos del perfil para el peso ideal (IMC)
+  const [perfilPeso] = usePersistedState("perfil.pesoMeta", "70");
+  const [perfilAltura] = usePersistedState("perfil.altura", "175");
+  const imc = calcularIMC(Number(perfilPeso), Number(perfilAltura));
 
-  // Sincronizamos con localStorage para que el Dashboard lea el peso actual.
-  useEffect(() => {
-    if (!cargando) {
-      try {
-        localStorage.setItem("progreso.peso", JSON.stringify(historial));
-      } catch {
-        // sin localStorage, no pasa nada
-      }
+  // Año seleccionado (por defecto, el actual)
+  const añoActual = new Date().getFullYear();
+  const [año, setAño] = useState(añoActual);
+
+  const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+  // Agrupamos los pesos por mes del año seleccionado (último peso de cada mes)
+  const porMes: (number | null)[] = Array(12).fill(null);
+  pesos.forEach((p) => {
+    const fecha = new Date(p.creado);
+    if (fecha.getFullYear() === año) {
+      porMes[fecha.getMonth()] = p.peso; // se queda el último de ese mes
     }
-  }, [cargando, historial]);
+  });
 
-  const pesoActual = historial.length ? historial[historial.length - 1].peso : 0;
-  const pesoInicial = historial.length ? historial[0].peso : 0;
-  const diff = (pesoActual - pesoInicial).toFixed(1);
-  const bajando = pesoActual <= pesoInicial;
+  // Datos para el gráfico (12 meses; meses sin dato quedan en null)
+  const historial: Punto[] = MESES.map((m, i) => ({ dia: m, peso: porMes[i] as number }));
+
+  // Años disponibles (donde hay registros) + el actual
+  const añosConDatos = Array.from(new Set(pesos.map((p) => new Date(p.creado).getFullYear())));
+  if (!añosConDatos.includes(añoActual)) añosConDatos.push(añoActual);
+  añosConDatos.sort((a, b) => a - b);
+
+  // Sincronizamos el peso más reciente con localStorage (para el Dashboard)
+  useEffect(() => {
+    if (!cargando && pesos.length) {
+      try {
+        const ultimo = [{ dia: "1", peso: pesos[pesos.length - 1].peso }];
+        localStorage.setItem("progreso.peso", JSON.stringify(ultimo));
+      } catch { /* nada */ }
+    }
+  }, [cargando, pesos]);
+
+  // Peso actual = el último registro de todos
+  const pesoActual = pesos.length ? pesos[pesos.length - 1].peso : 0;
+  // Pesos registrados del año, para ver la tendencia
+  const pesosDelAño = porMes.filter((p) => p !== null) as number[];
+  const pesoInicialAño = pesosDelAño.length ? pesosDelAño[0] : 0;
+  const diff = pesosDelAño.length ? (pesoActual - pesoInicialAño).toFixed(1) : "0";
+  const bajando = pesoActual <= pesoInicialAño;
+
+  // ¿El peso actual está dentro del rango saludable?
+  const enRango = imc ? (pesoActual >= imc.pesoIdealMin && pesoActual <= imc.pesoIdealMax) : false;
+
+  // Mensaje de Yuns según cómo va (siempre amable y motivador)
+  function mensajeYuns(): string {
+    if (!pesosDelAño.length) return "Registra tu peso para empezar a ver tu progreso. ¡Vamos! 🦊";
+    if (enRango) return "¡Estás en tu rango saludable! Sigue así, guerrero. 🦊";
+    if (pesosDelAño.length < 2) return "Buen comienzo. La constancia es lo que cuenta. 🦊";
+    // Si lleva varios registros pero no se mueve mucho
+    if (Math.abs(Number(diff)) < 0.5) return "Los cambios toman tiempo. No te rindas, cada día suma. 🦊";
+    return "¡Vas avanzando! Pequeños pasos llevan a grandes metas. 🦊";
+  }
 
   async function añadirPeso() {
     const p = Number(nuevoPeso);
@@ -96,27 +135,50 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
           </div>
         </div>
 
-        {/* Pestañas de periodo */}
-        <div className="periodos">
-          {PERIODOS.map((p) => (
-            <button key={p} className={`periodo-tab ${periodo === p ? "on" : ""}`} onClick={() => setPeriodo(p)}>
-              {p}
-            </button>
-          ))}
+        {/* Selector de año */}
+        <div className="año-sel">
+          <button
+            className="año-btn"
+            onClick={() => setAño(año - 1)}
+            disabled={!añosConDatos.includes(año - 1)}
+          >‹</button>
+          <span className="año-txt">{año}</span>
+          <button
+            className="año-btn"
+            onClick={() => setAño(año + 1)}
+            disabled={!añosConDatos.includes(año + 1)}
+          >›</button>
         </div>
+
+        {/* Peso ideal (del IMC) */}
+        {imc && (
+          <p className="peso-ideal">
+            🎯 Peso saludable para ti: <b>{imc.pesoIdealMin}–{imc.pesoIdealMax} kg</b>
+          </p>
+        )}
 
         {/* Gráfico con recharts */}
         <div className="chart">
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={historial} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid stroke="#3a2a20" strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="dia" stroke="#b09a7e" fontSize={11} tickLine={false} />
-              <YAxis stroke="#b09a7e" fontSize={11} tickLine={false} domain={["dataMin - 1", "dataMax + 1"]} />
+              <XAxis dataKey="dia" stroke="#b09a7e" fontSize={10} tickLine={false} interval={0} />
+              <YAxis stroke="#b09a7e" fontSize={11} tickLine={false} domain={["dataMin - 2", "dataMax + 2"]} />
               <Tooltip content={<MiTooltip />} />
-              <Line type="monotone" dataKey="peso" stroke="#e8a13a" strokeWidth={3} dot={{ fill: "#d23b2e", r: 3 }} activeDot={{ r: 5 }} />
+              {imc && (
+                <ReferenceLine y={imc.pesoIdealMax} stroke="#3f7d6e" strokeDasharray="4 4" />
+              )}
+              {imc && (
+                <ReferenceLine y={imc.pesoIdealMin} stroke="#3f7d6e" strokeDasharray="4 4" />
+              )}
+              <Line type="monotone" dataKey="peso" stroke="#e8a13a" strokeWidth={3}
+                dot={{ fill: "#d23b2e", r: 4 }} activeDot={{ r: 6 }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Mensaje motivador de Yuns */}
+        <div className="yuns-msg">{mensajeYuns()}</div>
 
         {/* Botón para registrar peso */}
         {!abrir ? (
@@ -236,11 +298,16 @@ const CSS = `
   .peso-diff.up { color:var(--red); }
   .peso-diff.up svg { transform:rotate(180deg); }
 
-  .periodos { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:14px; }
-  .periodo-tab { font-family:'Bebas Neue'; font-size:12px; letter-spacing:.5px; padding:8px 2px;
-    border:2px solid var(--ink); border-radius:5px; cursor:pointer; color:var(--mut);
-    background:#241410; transition:.12s; }
-  .periodo-tab.on { color:var(--paper); background:linear-gradient(135deg,var(--red),#7a1d13); border-color:var(--amber); }
+  .año-sel { display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:10px; }
+  .año-btn { width:34px; height:34px; border-radius:6px; border:2px solid var(--ink); cursor:pointer;
+    background:linear-gradient(160deg,#341f18,#26150f); color:var(--paper); font-size:20px; font-weight:900;
+    display:flex; align-items:center; justify-content:center; }
+  .año-btn:disabled { opacity:.3; cursor:default; }
+  .año-txt { font-family:'Bebas Neue'; font-size:26px; letter-spacing:2px; color:var(--amber); min-width:80px; text-align:center; }
+  .peso-ideal { font-size:13px; color:var(--txt); text-align:center; margin-bottom:12px; }
+  .peso-ideal b { color:var(--teal); }
+  .yuns-msg { background:#1c1410; border:2px solid var(--amber); border-radius:8px; padding:11px 13px;
+    font-size:13px; font-weight:700; color:var(--paper); text-align:center; margin-top:12px; line-height:1.4; }
 
   .chart { background:#1c1410; border:2px solid var(--ink); border-radius:8px; padding:10px 6px 4px; margin-bottom:14px; }
 

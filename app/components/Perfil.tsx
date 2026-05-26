@@ -8,7 +8,7 @@ import { useRacha } from "./useRacha";
 import { usePersistedState } from "./usePersistedState";
 
 // ============================================================
-//  NEO NUTRI — PERFIL (shonen pintado)
+//  NUT-KAIZEN — PERFIL (shonen pintado)
 //  Selector de avatar + formulario completo de metas.
 //  Por ahora los datos viven en useState (no se guardan al
 //  recargar). El guardado permanente se conecta más adelante.
@@ -183,23 +183,23 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros }: { onBack?: 
 
           <div className="field-row">
             <label className="field">
-              <span>PESO META (kg)</span>
+              <span>PESO ACTUAL (kg)</span>
               <input type="number" value={pesoMeta} onChange={(e) => setPesoMeta(e.target.value)} />
             </label>
             <label className="field">
-              <span>CALORÍAS META</span>
-              <input type="number" value={kcalMeta} onChange={(e) => setKcalMeta(e.target.value)} />
+              <span>ALTURA (cm)</span>
+              <input type="number" value={altura} onChange={(e) => setAltura(e.target.value)} />
             </label>
           </div>
 
           <div className="field-row">
             <label className="field">
-              <span>ALTURA (cm)</span>
-              <input type="number" value={altura} onChange={(e) => setAltura(e.target.value)} />
-            </label>
-            <label className="field">
               <span>EDAD</span>
               <input type="number" value={edad} onChange={(e) => setEdad(e.target.value)} />
+            </label>
+            <label className="field">
+              <span>CALORÍAS META</span>
+              <input type="number" value={kcalMeta} onChange={(e) => setKcalMeta(e.target.value)} />
             </label>
           </div>
         </div>
