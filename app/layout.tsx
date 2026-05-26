@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const metadata = {
-  title: "NUT-KAIZEN",
+  title: "KAIZEN",
   description: "Tu app de nutrición y entrenamiento. Mejora continua, un día a la vez.",
   icons: {
     icon: "/icon-192.png",

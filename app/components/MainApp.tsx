@@ -13,10 +13,11 @@ import Logros from "./Logros";
 import Login from "./Login";
 import NuevaContrasena from "./NuevaContrasena";
 import YunsFlotante from "./YunsFlotante";
+import Intro from "./Intro";
 import { supabase } from "./supabaseClient";
 
 // ============================================================
-//  NEO NUTRI — MainApp (el "cerebro" de navegación)
+//  NUT-KAIZEN — MainApp (el "cerebro" de navegación)
 //  Recuerda qué pantalla está activa y muestra la correcta.
 // ============================================================
 
@@ -51,6 +52,14 @@ export default function MainApp() {
 
   // ¿El usuario llegó desde el enlace de recuperación de contraseña?
   const [recuperando, setRecuperando] = useState(false);
+
+  // ¿Mostrar la introducción? (solo la primera vez)
+  const [verIntro, setVerIntro] = useState(false);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("kaizen.introVista")) setVerIntro(true);
+    } catch { /* nada */ }
+  }, []);
 
   useEffect(() => {
     // Detectar si venimos del enlace de recuperación (?recuperar=1 en la URL)
@@ -101,6 +110,11 @@ export default function MainApp() {
   // Si NO hay sesión, mostramos el login
   if (!sesion) {
     return <Login onEntrar={() => { /* el listener actualiza la sesión solo */ }} />;
+  }
+
+  // La primera vez (ya logueado), mostramos la introducción
+  if (verIntro) {
+    return <Intro onListo={() => setVerIntro(false)} />;
   }
 
   // Decide qué componente mostrar según 'screen'.

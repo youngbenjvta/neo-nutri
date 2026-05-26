@@ -100,7 +100,7 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
         {/* LOGO */}
         <div className="auth-logo">
           <Flame size={36} className="auth-flame" />
-          <h1 className="auth-brand">NUT-KAIZEN</h1>
+          <h1 className="auth-brand">KAIZEN</h1>
           <span className="auth-jp">改善 · KAIZEN</span>
         </div>
 

@@ -182,7 +182,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
       <header className="hero panel">
         <div className="speedlines" />
         <div className="hero-top">
-          <h1 className="brand">NUT-KAIZEN</h1>
+          <h1 className="brand">KAIZEN</h1>
           <span className="brand-jp">改善 · KAIZEN</span>
           <button className="mute-btn" onClick={sonido.toggleMudo} aria-label="Silenciar" title="Silenciar sonidos">
             {sonido.mudo ? <VolumeX size={18} /> : <Volume2 size={18} />}
