@@ -19,7 +19,8 @@ export function useComidasNube() {
   const [comidas, setComidas] = useState<ComidaNube[]>([]);
   const [cargando, setCargando] = useState(true);
 
-  // Trae todas las comidas del usuario desde la nube
+  // Trae las comidas de HOY del usuario desde la nube
+  // (las de días anteriores siguen guardadas, pero no se muestran)
   const recargar = useCallback(async () => {
     const { data: userData } = await supabase.auth.getUser();
     const user = userData.user;
@@ -27,10 +28,16 @@ export function useComidasNube() {
       setCargando(false);
       return;
     }
+
+    // Inicio del día de hoy (medianoche), para traer solo las de hoy
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
     const { data } = await supabase
       .from("comidas")
       .select("*")
       .eq("user_id", user.id)
+      .gte("creado", hoy.toISOString())
       .order("creado", { ascending: true });
 
     if (data) {

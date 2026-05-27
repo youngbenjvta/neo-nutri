@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Dumbbell, Flame } from "lucide-react";
 import { useProgreso, XP_POR_ENTRENO } from "./useProgreso";
 import { useSonido } from "./useSonido";
 import { usePersistedState } from "./usePersistedState";
+import { useDiarioNube } from "./useDiarioNube";
 
 // ============================================================
 //  NUT-KAIZEN — RUTINAS (shonen pintado)
@@ -73,6 +74,7 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
   const [nivel, setNivel] = useState(nivelGuardado);
   const [abierta, setAbierta] = useState<string | null>(null); // id de rutina abierta, o null = lista
   const { completarEntreno } = useProgreso();
+  const { diario, actualizar } = useDiarioNube();
   const sonido = useSonido();
   const [hecho, setHecho] = useState(false); // muestra confirmación de XP ganado
 
@@ -91,6 +93,8 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
   // Al completar un entrenamiento: suma XP, suena, y muestra confirmación.
   async function entrenar() {
     const subioNivel = await completarEntreno();
+    // Sumamos el entrenamiento de hoy (se reinicia cada día)
+    await actualizar({ ...diario, entrenos: diario.entrenos + 1 });
     if (subioNivel) {
       sonido.levelUp();   // ¡tu levelup.mp3!
     } else {

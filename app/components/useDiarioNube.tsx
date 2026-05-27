@@ -9,11 +9,12 @@ import { supabase } from "./supabaseClient";
 // ============================================================
 
 export type Diario = {
-  agua: number;   // vasos de agua
-  pasos: number;  // pasos del día
+  agua: number;        // vasos de agua
+  pasos: number;       // pasos del día
+  entrenos: number;    // entrenamientos de hoy
 };
 
-const INICIAL: Diario = { agua: 0, pasos: 0 };
+const INICIAL: Diario = { agua: 0, pasos: 0, entrenos: 0 };
 
 // Fecha de hoy en formato "AAAA-MM-DD" (para comparar días)
 function hoyTexto(): string {
@@ -43,17 +44,17 @@ export function useDiarioNube() {
       // ¿La fecha guardada es de hoy?
       if (data.fecha === hoy) {
         // Mismo día: usamos los valores guardados
-        setDiario({ agua: Number(data.agua) || 0, pasos: Number(data.pasos) || 0 });
+        setDiario({ agua: Number(data.agua) || 0, pasos: Number(data.pasos) || 0, entrenos: Number(data.entrenos) || 0 });
       } else {
         // Día nuevo: reiniciamos a cero y actualizamos la fecha
         await supabase.from("diario").update({
-          agua: 0, pasos: 0, fecha: hoy, actualizado: new Date().toISOString(),
+          agua: 0, pasos: 0, entrenos: 0, fecha: hoy, actualizado: new Date().toISOString(),
         }).eq("user_id", user.id);
         setDiario(INICIAL);
       }
     } else {
       // Primera vez: creamos el registro de hoy
-      await supabase.from("diario").insert({ user_id: user.id, agua: 0, pasos: 0, fecha: hoy });
+      await supabase.from("diario").insert({ user_id: user.id, agua: 0, pasos: 0, entrenos: 0, fecha: hoy });
       setDiario(INICIAL);
     }
     setCargando(false);
@@ -73,6 +74,7 @@ export function useDiarioNube() {
         user_id: user.id,
         agua: nuevo.agua,
         pasos: nuevo.pasos,
+        entrenos: nuevo.entrenos,
         fecha: hoyTexto(),
         actualizado: new Date().toISOString(),
       });

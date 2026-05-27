@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Flame, Dumbbell, TrendingUp, ChevronRight,
   Activity, Plus, Droplet, Beef, Wheat, Salad, Volume2, VolumeX, Sparkles
@@ -135,7 +135,18 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   const d = DATA;
   const [beast, setBeast] = usePersistedState("dashboard.beast", false);
   // ¡Misma clave que Comida.tsx! Por eso comparten los datos.
-  const [comidas] = usePersistedState<Comida[]>("comida.lista", COMIDAS_INICIAL);
+  const [comidas, setComidas] = usePersistedState<Comida[]>("comida.lista", COMIDAS_INICIAL);
+
+  // Las comidas son solo del día. Si cambió el día, limpiamos la lista local
+  // (en la nube siguen guardadas; aquí solo se muestran las de hoy).
+  const [ultimoDiaComidas, setUltimoDiaComidas] = usePersistedState("comida.fecha", "");
+  useEffect(() => {
+    const hoy = new Date().toDateString();
+    if (ultimoDiaComidas !== hoy) {
+      setComidas([]);
+      setUltimoDiaComidas(hoy);
+    }
+  }, [ultimoDiaComidas, setComidas, setUltimoDiaComidas]);
   const { prog } = useProgreso();
   // Leemos del MISMO sitio donde el Perfil guarda (claves compartidas)
   const [nombre] = usePersistedState("perfil.nombre", "GUERRERO");
