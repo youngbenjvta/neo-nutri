@@ -26,7 +26,7 @@ const NIVELES_GYM = [
   { id: "avz", label: "AVANZADO" },
 ];
 
-export default function Perfil({ onBack, onCerrarSesion, onLogros }: { onBack?: () => void; onCerrarSesion?: () => void; onLogros?: () => void }) {
+export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }: { onBack?: () => void; onCerrarSesion?: () => void; onLogros?: () => void; onCompartir?: () => void }) {
   const { perfil, guardarPerfil, cargando, guardando } = usePerfilNube();
   const { prog } = useProgreso();
   const { racha } = useRacha();
@@ -241,6 +241,12 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros }: { onBack?: 
         </button>
       )}
 
+      {onCompartir && (
+        <button className="compartir-btn" onClick={onCompartir}>
+          📤 COMPARTIR MI PROGRESO
+        </button>
+      )}
+
       {onCerrarSesion && (
         <button className="logout-btn" onClick={onCerrarSesion}>
           CERRAR SESIÓN
@@ -334,6 +340,10 @@ const CSS = `
     cursor:pointer; background:linear-gradient(95deg,var(--gold),#b8923a); border:2px solid var(--ink);
     padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-bottom:11px; }
   .logros-btn:active { transform:translate(3px,3px); box-shadow:none; }
+  .compartir-btn { width:100%; font-family:'Bebas Neue'; font-size:18px; letter-spacing:2px; color:var(--paper);
+    cursor:pointer; background:linear-gradient(95deg,#3f7d6e,#2c5d51); border:2px solid var(--ink);
+    padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-bottom:11px; }
+  .compartir-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .logout-btn { width:100%; font-family:'Bebas Neue'; font-size:17px; letter-spacing:2px; color:var(--mut);
     cursor:pointer; background:#241410; border:2px solid var(--ink); padding:11px; border-radius:6px;
     transition:.12s; }

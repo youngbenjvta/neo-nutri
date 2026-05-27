@@ -15,6 +15,7 @@ import NuevaContrasena from "./NuevaContrasena";
 import YunsFlotante from "./YunsFlotante";
 import Intro from "./Intro";
 import Asistente from "./Asistente";
+import Compartir from "./Compartir";
 import { supabase } from "./supabaseClient";
 
 // ============================================================
@@ -133,11 +134,13 @@ export default function MainApp() {
       case "progreso":
         return <Progreso onBack={() => setScreen("inicio")} />;
       case "perfil":
-        return <Perfil onBack={() => setScreen("inicio")} onCerrarSesion={cerrarSesion} onLogros={() => setScreen("logros")} />;
+        return <Perfil onBack={() => setScreen("inicio")} onCerrarSesion={cerrarSesion} onLogros={() => setScreen("logros")} onCompartir={() => setScreen("compartir")} />;
       case "logros":
         return <Logros onBack={() => setScreen("perfil")} />;
       case "asistente":
         return <Asistente onBack={() => setScreen("inicio")} />;
+      case "compartir":
+        return <Compartir onBack={() => setScreen("perfil")} />;
       default:
         return <Dashboard onNavigate={setScreen} />;
     }
