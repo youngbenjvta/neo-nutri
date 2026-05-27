@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import { ChevronLeft, ChevronRight, Dumbbell, Flame } from "lucide-react";
 import { useProgreso, XP_POR_ENTRENO } from "./useProgreso";
 import { useSonido } from "./useSonido";
+import { usePersistedState } from "./usePersistedState";
 
 // ============================================================
-//  NEO NUTRI — RUTINAS (shonen pintado)
+//  NUT-KAIZEN — RUTINAS (shonen pintado)
 //  Niveles (principiante/intermedio/avanzado) + tarjetas de
 //  rutina + detalle con ejercicios. Dos vistas internas.
 // ============================================================
@@ -21,6 +22,13 @@ const SERIES_POR_NIVEL: Record<string, string> = {
   prin: "3 × 10",
   inter: "4 × 10",
   avz: "5 × 12",
+};
+
+// Cuántos ejercicios ve cada nivel (principiante = simple, no abruma)
+const EJERCICIOS_POR_NIVEL: Record<string, number> = {
+  prin: 2,
+  inter: 4,
+  avz: 6,
 };
 
 // Cada rutina: nombre, músculos, color de acento, kanji, y sus ejercicios.
@@ -54,20 +62,31 @@ const RUTINAS = [
     name: "FULL BODY",
     jp: "全身",
     muscles: "Cuerpo completo",
-    tone: "#9b6bd2",
+    tone: "#c77d3a",
     ejercicios: ["Sentadilla", "Press de banca", "Remo con barra", "Press militar", "Peso muerto", "Plancha abdominal"],
   },
 ];
 
 export default function Rutinas({ onBack }: { onBack?: () => void }) {
-  const [nivel, setNivel] = useState("prin");
+  // El nivel se lee del perfil (lo eligió al registrarse), pero se puede cambiar aquí
+  const [nivelGuardado, setNivelGuardado] = usePersistedState("perfil.nivelGym", "prin");
+  const [nivel, setNivel] = useState(nivelGuardado);
   const [abierta, setAbierta] = useState<string | null>(null); // id de rutina abierta, o null = lista
   const { completarEntreno } = useProgreso();
   const sonido = useSonido();
   const [hecho, setHecho] = useState(false); // muestra confirmación de XP ganado
 
+  // Cuántos ejercicios mostrar según el nivel (principiante ve menos)
+  const tope = EJERCICIOS_POR_NIVEL[nivel] || 2;
+
   const rutina = RUTINAS.find((r) => r.id === abierta);
   const series = SERIES_POR_NIVEL[nivel];
+
+  // Cambiar nivel también lo guarda en el perfil
+  function cambiarNivel(n: string) {
+    setNivel(n);
+    setNivelGuardado(n);
+  }
 
   // Al completar un entrenamiento: suma XP, suena, y muestra confirmación.
   async function entrenar() {
@@ -106,7 +125,7 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
         </div>
 
         <div className="ex-list">
-          {rutina.ejercicios.map((e, i) => (
+          {rutina.ejercicios.slice(0, tope).map((e, i) => (
             <div key={e} className="ex">
               <span className="ex-num" style={{ background: rutina.tone }}>{i + 1}</span>
               <span className="ex-name">{e}</span>
@@ -141,7 +160,7 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
           <button
             key={n.id}
             className={`level-tab ${nivel === n.id ? "on" : ""}`}
-            onClick={() => setNivel(n.id)}
+            onClick={() => cambiarNivel(n.id)}
           >
             {n.label}
           </button>
@@ -158,7 +177,7 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
                 {r.name} <span className="rutina-jp">{r.jp}</span>
               </div>
               <div className="rutina-muscles">{r.muscles}</div>
-              <div className="rutina-meta">{r.ejercicios.length} ejercicios · {series}</div>
+              <div className="rutina-meta">{Math.min(r.ejercicios.length, tope)} ejercicios · {series}</div>
             </div>
             <ChevronRight size={20} className="rutina-arrow" />
           </button>

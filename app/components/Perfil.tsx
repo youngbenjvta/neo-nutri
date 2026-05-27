@@ -20,6 +20,12 @@ const OBJETIVOS = [
   { id: "subir", label: "SUBIR" },
 ];
 
+const NIVELES_GYM = [
+  { id: "prin", label: "PRINCIPIANTE" },
+  { id: "inter", label: "INTERMEDIO" },
+  { id: "avz", label: "AVANZADO" },
+];
+
 export default function Perfil({ onBack, onCerrarSesion, onLogros }: { onBack?: () => void; onCerrarSesion?: () => void; onLogros?: () => void }) {
   const { perfil, guardarPerfil, cargando, guardando } = usePerfilNube();
   const { prog } = useProgreso();
@@ -37,6 +43,9 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros }: { onBack?: 
 
   // Logros desbloqueados (guardados por la pantalla de Logros en localStorage)
   const [logrosCount] = usePersistedState("logros.desbloqueados", 0);
+
+  // Nivel de gym (lo usa la pantalla de Rutinas para limitar ejercicios)
+  const [nivelGym, setNivelGym] = usePersistedState("perfil.nivelGym", "prin");
 
   // Foto de perfil (guardada en el dispositivo como texto base64)
   const [foto, setFoto] = usePersistedState("perfil.foto", "");
@@ -170,6 +179,23 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros }: { onBack?: 
             </button>
           ))}
         </div>
+      </section>
+
+      {/* NIVEL DE GYM */}
+      <section className="panel">
+        <h2 className="card-title">力 NIVEL DE GYM</h2>
+        <div className="obj-row">
+          {NIVELES_GYM.map((n) => (
+            <button
+              key={n.id}
+              className={`obj-btn ${nivelGym === n.id ? "on" : ""}`}
+              onClick={() => setNivelGym(n.id)}
+            >
+              {n.label}
+            </button>
+          ))}
+        </div>
+        <p className="hint">Define cuántos ejercicios verás en tus rutinas. Principiante: 2 · Intermedio: 4 · Avanzado: 6. 🥋</p>
       </section>
 
       {/* FORMULARIO DE METAS */}
