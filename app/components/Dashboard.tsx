@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import {
   Flame, Dumbbell, TrendingUp, ChevronRight,
-  Activity, Plus, Droplet, Beef, Wheat, Salad, Volume2, VolumeX
+  Activity, Plus, Droplet, Beef, Wheat, Salad, Volume2, VolumeX, Sparkles
 } from "lucide-react";
 import { usePersistedState } from "./usePersistedState";
 import { useProgreso } from "./useProgreso";
@@ -206,6 +206,16 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
       {/* YUNS — la mascota que te saluda */}
       <Yuns nombre={nombre} />
 
+      {/* ACCESO AL ASISTENTE (plan personalizado) */}
+      <button className="asis-card" onClick={() => go("asistente")}>
+        <div className="asis-card-ic"><Sparkles size={26} /></div>
+        <div className="asis-card-txt">
+          <b>ASISTENTE KAIZEN</b>
+          <span>Crea tu rutina y minuta personalizada 🦊</span>
+        </div>
+        <ChevronRight size={22} />
+      </button>
+
       {/* PROGRESO */}
       <section className="panel">
         <h2 className="card-title">闘 TU PROGRESO</h2>
@@ -324,6 +334,14 @@ const CSS = `
     border:2px solid #0d0805; border-radius:6px; padding:16px; margin-bottom:14px;
     box-shadow: 4px 4px 0 #00000055, inset 0 1px 0 #ffffff0d;
   }
+  .asis-card { display:flex; align-items:center; gap:12px; width:100%; cursor:pointer; text-align:left;
+    background:linear-gradient(95deg,#3a1c14,#2a1812); border:2px solid var(--amber); border-radius:8px;
+    padding:14px; margin-bottom:14px; box-shadow:4px 4px 0 #00000055; color:var(--paper); transition:.12s; }
+  .asis-card:active { transform:translate(2px,2px); box-shadow:2px 2px 0 #00000055; }
+  .asis-card-ic { color:var(--amber); flex-shrink:0; }
+  .asis-card-txt { flex:1; display:flex; flex-direction:column; }
+  .asis-card-txt b { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; }
+  .asis-card-txt span { font-size:12px; color:var(--mut); font-weight:500; }
   .hero { overflow:hidden; }
   .speedlines {
     position:absolute; inset:0; opacity:.08; pointer-events:none;
