@@ -1,13 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, Plus, Trash2, Flame, X, Search } from "lucide-react";
+import { ChevronLeft, Plus, Trash2, Flame, X, Search, Star } from "lucide-react";
 import { useComidasNube } from "./useComidasNube";
 import { ALIMENTOS, CATEGORIAS, CANTIDADES, type Alimento } from "./alimentos";
+import { useFavoritos } from "./useFavoritos";
 import { usePersistedState } from "./usePersistedState";
 import { calcularMetaKcal } from "./calcularMeta";
 
 // ============================================================
-//  NEO NUTRI — ALIMENTACIÓN (shonen pintado)
+//  NUT-KAIZEN — ALIMENTACIÓN (shonen pintado)
 //  Registro de comidas del día. Añadir / borrar. Persistente.
 // ============================================================
 
@@ -28,6 +29,7 @@ function jpDe(tipo: string) {
 export default function Comida({ onBack }: { onBack?: () => void }) {
   // Comidas desde la nube (Supabase)
   const { comidas, cargando, agregar, borrar: borrarNube } = useComidasNube();
+  const { favoritos, agregarFavorito, quitarFavorito, esFavorito } = useFavoritos();
 
   // Estado del formulario para añadir
   const [abrir, setAbrir] = useState(false);
@@ -152,6 +154,28 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
         </div>
         <div className="resumen-bar"><div className="resumen-fill" style={{ width: `${pct}%` }} /></div>
       </section>
+
+      {/* FAVORITOS — registro rápido con 1 toque */}
+      {favoritos.length > 0 && (
+        <section className="panel">
+          <h2 className="card-title">★ FAVORITOS</h2>
+          <p className="fav-hint">Toca para registrar al instante 🦊</p>
+          <div className="fav-list">
+            {favoritos.map((f) => (
+              <button
+                key={f.id}
+                className="fav-chip"
+                onClick={() => agregar(f.tipo, f.nombre, f.kcal)}
+                style={{ borderColor: tonoDe(f.tipo) }}
+              >
+                <span className="fav-jp" style={{ color: tonoDe(f.tipo) }}>{jpDe(f.tipo)}</span>
+                <span className="fav-nombre">{f.nombre}</span>
+                <span className="fav-kcal">{f.kcal} kcal</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* LISTA DE COMIDAS */}
       <section className="panel">
@@ -314,21 +338,35 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
           {!cargando && comidas.length === 0 && (
             <p className="vacio">Aún no has registrado comidas hoy. Toca + para empezar.</p>
           )}
-          {comidas.map((c) => (
-            <div key={c.id} className="meal">
-              <span className="meal-tag" style={{ borderColor: tonoDe(c.tipo), color: tonoDe(c.tipo) }}>
-                {jpDe(c.tipo)}
-              </span>
-              <div className="meal-info">
-                <b>{c.tipo}</b>
-                <em>{c.nombre}</em>
+          {comidas.map((c) => {
+            const esFav = esFavorito(c.nombre, c.tipo);
+            return (
+              <div key={c.id} className="meal">
+                <span className="meal-tag" style={{ borderColor: tonoDe(c.tipo), color: tonoDe(c.tipo) }}>
+                  {jpDe(c.tipo)}
+                </span>
+                <div className="meal-info">
+                  <b>{c.tipo}</b>
+                  <em>{c.nombre}</em>
+                </div>
+                <span className="meal-kcal">{c.kcal}<small>kcal</small></span>
+                <button
+                  className={`fav-btn ${esFav ? "on" : ""}`}
+                  onClick={() => esFav
+                    ? quitarFavorito(favoritos.find((f) => f.nombre === c.nombre && f.tipo === c.tipo)?.id || "")
+                    : agregarFavorito(c.tipo, c.nombre, c.kcal)
+                  }
+                  aria-label="Favorito"
+                  title={esFav ? "Quitar de favoritos" : "Añadir a favoritos"}
+                >
+                  <Star size={16} fill={esFav ? "#e8a13a" : "none"} />
+                </button>
+                <button className="del-btn" onClick={() => borrar(c.id)} aria-label="Borrar">
+                  <Trash2 size={16} />
+                </button>
               </div>
-              <span className="meal-kcal">{c.kcal}<small>kcal</small></span>
-              <button className="del-btn" onClick={() => borrar(c.id)} aria-label="Borrar">
-                <Trash2 size={16} />
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
     </div>
@@ -474,4 +512,23 @@ const CSS = `
     background:#241410; border:2px solid var(--ink); display:flex; align-items:center; justify-content:center;
     flex-shrink:0; transition:.12s; }
   .del-btn:hover { color:var(--red); border-color:var(--red); }
+
+  /* ★ Botón favorito en cada comida */
+  .fav-btn { width:30px; height:30px; border-radius:6px; cursor:pointer; color:var(--mut);
+    background:#241410; border:2px solid var(--ink); display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:.12s; margin-right:4px; }
+  .fav-btn:hover { color:var(--amber); border-color:var(--amber); }
+  .fav-btn.on { color:var(--amber); border-color:var(--amber); }
+
+  /* Sección de favoritos arriba */
+  .fav-hint { font-size:12px; color:var(--mut); margin-bottom:10px; font-style:italic; }
+  .fav-list { display:flex; flex-direction:column; gap:7px; }
+  .fav-chip { display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; text-align:left;
+    background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink); border-radius:6px;
+    color:var(--paper); transition:.12s; }
+  .fav-chip:hover { transform:translateY(-1px); box-shadow:2px 2px 0 #00000055; }
+  .fav-chip:active { transform:translate(2px,2px); }
+  .fav-jp { font-size:18px; font-weight:900; flex-shrink:0; min-width:24px; text-align:center; }
+  .fav-nombre { flex:1; font-size:13.5px; font-weight:700; }
+  .fav-kcal { font-family:'Bebas Neue'; font-size:15px; color:var(--amber); flex-shrink:0; }
 `;
