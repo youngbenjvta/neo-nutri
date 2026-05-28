@@ -39,7 +39,7 @@ const RUTINAS = [
     name: "PUSH DAY",
     jp: "押す",
     muscles: "Pecho · Hombros · Tríceps",
-    tone: "#d23b2e",
+    tone: "var(--red)",
     ejercicios: ["Press de banca", "Press inclinado con mancuernas", "Press militar", "Elevaciones laterales", "Fondos en paralelas", "Extensión de tríceps en polea"],
   },
   {
@@ -47,7 +47,7 @@ const RUTINAS = [
     name: "PULL DAY",
     jp: "引く",
     muscles: "Espalda · Bíceps",
-    tone: "#e8a13a",
+    tone: "var(--amber)",
     ejercicios: ["Dominadas", "Remo con barra", "Jalón al pecho", "Remo en polea baja", "Curl con barra", "Curl martillo"],
   },
   {
@@ -55,7 +55,7 @@ const RUTINAS = [
     name: "LEG DAY",
     jp: "脚",
     muscles: "Piernas · Glúteos",
-    tone: "#3f7d6e",
+    tone: "var(--teal)",
     ejercicios: ["Sentadilla", "Prensa de piernas", "Peso muerto rumano", "Zancadas", "Curl femoral", "Elevación de gemelos"],
   },
   {
@@ -157,7 +157,6 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
         <span className="top-jp">ルーティン</span>
       </header>
 
-
       {/* PESTAÑAS DE NIVEL */}
       <div className="levels">
         {NIVELES.map((n) => (
@@ -194,21 +193,17 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
 const CSS = `
   * { box-sizing: border-box; margin: 0; }
   .app {
-    --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;
-    --paper:#f6e9c8; --ink:#0d0805;
-    --red:#d23b2e; --amber:#e8a13a; --gold:#d4a84a;
-    --txt:#f3e6cd; --mut:#b09a7e;
     max-width:460px; margin:0 auto; padding:16px 14px 32px;
     color:var(--txt); min-height:100vh; position:relative; overflow-x:hidden;
     font-family:'Zen Kaku Gothic New', sans-serif; font-weight:500;
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 8%, #5a2a1e 0%, transparent 45%),
+      radial-gradient(circle at 50% 8%, var(--glow) 0%, transparent 45%),
       linear-gradient(165deg, var(--bg2), var(--bg1));
   }
   .top { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
   .back { width:38px; height:38px; border-radius:6px; border:2px solid var(--ink);
-    background:#241410; color:var(--paper);
+    background:var(--bg2); color:var(--paper);
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
   .top-title { font-family:'Bebas Neue'; font-size:30px; letter-spacing:2px; color:var(--paper); flex:1; }
   .top-jp { font-size:12px; color:var(--mut); letter-spacing:2px; }
@@ -220,8 +215,8 @@ const CSS = `
   .levels { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:16px; }
   .level-tab { font-family:'Bebas Neue'; font-size:13px; letter-spacing:1px; padding:10px 2px;
     border:2px solid var(--ink); border-radius:6px; cursor:pointer; color:var(--mut);
-    background:#241410; transition:.12s; }
-  .level-tab.on { color:var(--paper); background:linear-gradient(135deg,var(--red),#7a1d13); border-color:var(--amber); }
+    background:var(--bg2); transition:.12s; }
+  .level-tab.on { color:var(--paper); background:linear-gradient(135deg,var(--red),var(--red)); border-color:var(--amber); }
 
   /* TARJETAS */
   .cards { display:flex; flex-direction:column; gap:12px; }
@@ -242,15 +237,15 @@ const CSS = `
   .detail-muscles { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:var(--paper); }
   .detail-level { font-size:12px; color:var(--mut); }
   .ex-list { display:flex; flex-direction:column; gap:9px; }
-  .ex { display:flex; align-items:center; gap:12px; background:linear-gradient(160deg,#341f18,#26150f);
+  .ex { display:flex; align-items:center; gap:12px; background:linear-gradient(160deg,var(--panel2),var(--panel));
     border:2px solid var(--ink); border-radius:6px; padding:12px; }
-  .ex-num { width:30px; height:30px; border-radius:6px; border:2px solid var(--ink); color:#0d0805;
+  .ex-num { width:30px; height:30px; border-radius:6px; border:2px solid var(--ink); color:var(--ink);
     font-family:'Bebas Neue'; font-size:16px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .ex-name { flex:1; font-size:14px; font-weight:700; color:var(--paper); }
   .ex-sets { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:var(--amber); }
   .start-btn { width:100%; margin-top:18px; display:flex; align-items:center; justify-content:center; gap:8px;
     font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; color:var(--paper); cursor:pointer;
-    background:linear-gradient(95deg,var(--red),#a02619); border:2px solid var(--ink); padding:13px;
+    background:linear-gradient(95deg,var(--red),var(--red)); border:2px solid var(--ink); padding:13px;
     border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; }
   .start-btn:active { transform:translate(3px,3px); box-shadow:none; }
 `;

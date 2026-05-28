@@ -213,19 +213,16 @@ export default function Asistente({ onBack }: { onBack?: () => void }) {
 const CSS = `
   * { box-sizing:border-box; margin:0; }
   .asis {
-    --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;
-    --paper:#f6e9c8; --ink:#0d0805; --red:#d23b2e; --amber:#e8a13a; --gold:#d4a84a; --teal:#3f7d6e;
-    --txt:#f3e6cd; --mut:#b09a7e;
     max-width:460px; margin:0 auto; padding:16px 14px 90px;
     color:var(--txt); min-height:100vh; font-family:'Zen Kaku Gothic New', sans-serif; font-weight:500;
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 8%, #5a2a1e 0%, transparent 45%),
+      radial-gradient(circle at 50% 8%, var(--glow) 0%, transparent 45%),
       linear-gradient(165deg, var(--bg2), var(--bg1));
   }
   .top { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
   .back { width:38px; height:38px; border-radius:6px; border:2px solid var(--ink);
-    background:linear-gradient(160deg,#341f18,#26150f); color:var(--paper); cursor:pointer;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); color:var(--paper); cursor:pointer;
     display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .top-title { font-family:'Bebas Neue'; font-size:26px; letter-spacing:2px; color:var(--paper); flex:1; }
   .top-jp { font-size:12px; color:var(--mut); letter-spacing:2px; }
@@ -235,7 +232,7 @@ const CSS = `
     letter-spacing:1px; color:var(--paper); border-bottom:3px solid var(--red); padding-bottom:5px;
     margin-bottom:14px; }
 
-  .prog-bar { height:8px; background:#1a0f0a; border:2px solid var(--ink); border-radius:5px;
+  .prog-bar { height:8px; background:var(--bg1); border:2px solid var(--ink); border-radius:5px;
     overflow:hidden; margin-bottom:16px; }
   .prog-fill { height:100%; background:repeating-linear-gradient(45deg, var(--amber) 0 7px, var(--red) 7px 14px); transition:width .3s; }
 
@@ -243,19 +240,19 @@ const CSS = `
   .preg-hint { font-size:12px; color:var(--amber); margin-bottom:14px; }
   .opciones { display:flex; flex-direction:column; gap:9px; margin-top:10px; }
   .opcion { display:flex; align-items:center; justify-content:space-between; cursor:pointer; text-align:left;
-    background:#241410; border:2px solid var(--ink); border-radius:6px; padding:14px; color:var(--txt);
+    background:var(--bg2); border:2px solid var(--ink); border-radius:6px; padding:14px; color:var(--txt);
     font-size:15px; font-weight:700; transition:.12s; }
   .opcion:hover { border-color:var(--amber); }
-  .opcion.on { border-color:var(--amber); background:linear-gradient(160deg,#3a241c,#2a1812); color:var(--paper); }
+  .opcion.on { border-color:var(--amber); background:linear-gradient(160deg,var(--panel2),var(--panel)); color:var(--paper); }
   .opcion.on svg { color:var(--amber); }
 
   .asis-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
     font-family:'Bebas Neue'; font-size:21px; letter-spacing:2px; color:var(--paper); cursor:pointer;
-    background:linear-gradient(95deg,var(--red),#a02619); border:2px solid var(--ink);
+    background:linear-gradient(95deg,var(--red),var(--red)); border:2px solid var(--ink);
     padding:14px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; }
   .asis-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .asis-btn:disabled { opacity:.45; cursor:default; }
-  .rehacer { background:linear-gradient(95deg,#3a241c,#2a1812); margin-top:4px; }
+  .rehacer { background:linear-gradient(95deg,var(--panel2),var(--panel)); margin-top:4px; }
 
   .intro-panel { text-align:center; }
   .intro-ic { color:var(--amber); display:flex; justify-content:center; margin-bottom:10px; }
@@ -266,16 +263,16 @@ const CSS = `
   .plan-kcal { font-family:'Bebas Neue'; font-size:20px; color:var(--paper); text-align:center; margin-bottom:12px; }
   .plan-kcal b { font-size:38px; color:var(--amber); }
   .macros-fila { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
-  .macro-chip { background:#241410; border:2px solid var(--ink); border-radius:6px; padding:10px 4px; text-align:center; }
+  .macro-chip { background:var(--bg2); border:2px solid var(--ink); border-radius:6px; padding:10px 4px; text-align:center; }
   .macro-chip b { display:block; font-family:'Bebas Neue'; font-size:22px; color:var(--paper); }
   .macro-chip span { font-size:10px; color:var(--mut); letter-spacing:1px; font-weight:700; }
 
-  .plan-row { display:flex; gap:12px; padding:10px; background:#241410; border:2px solid var(--ink);
+  .plan-row { display:flex; gap:12px; padding:10px; background:var(--bg2); border:2px solid var(--ink);
     border-radius:6px; margin-bottom:8px; align-items:center; }
   .plan-dia { font-family:'Bebas Neue'; font-size:16px; color:var(--amber); min-width:54px; }
   .plan-foco { font-size:13px; font-weight:700; color:var(--paper); }
 
-  .minuta-row { padding:11px; background:#241410; border:2px solid var(--ink); border-radius:6px; margin-bottom:8px; }
+  .minuta-row { padding:11px; background:var(--bg2); border:2px solid var(--ink); border-radius:6px; margin-bottom:8px; }
   .minuta-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; }
   .minuta-comida { font-family:'Bebas Neue'; font-size:17px; letter-spacing:1px; color:var(--paper); }
   .minuta-kcal { font-size:13px; font-weight:900; color:var(--amber); }
@@ -286,7 +283,7 @@ const CSS = `
   .select-tit { font-family:'Bebas Neue'; font-size:15px; letter-spacing:1px; margin-bottom:2px; }
   .select-col.come .select-tit { color:var(--teal); }
   .select-col.nocome .select-tit { color:var(--red); }
-  .select-item { font-size:12px; font-weight:700; color:var(--txt); background:#241410;
+  .select-item { font-size:12px; font-weight:700; color:var(--txt); background:var(--bg2);
     border:2px solid var(--ink); border-radius:5px; padding:6px 8px; }
 
   .plan-nota { font-size:10px; color:var(--mut); font-style:italic; text-align:center; margin:10px 0 14px; opacity:.85; line-height:1.4; }

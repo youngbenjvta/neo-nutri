@@ -14,14 +14,14 @@ import { calcularMetaKcal } from "./calcularMeta";
 // ============================================================
 
 const TIPOS = [
-  { id: "Desayuno", jp: "朝", tone: "#e8a13a" },
-  { id: "Almuerzo", jp: "昼", tone: "#d23b2e" },
+  { id: "Desayuno", jp: "朝", tone: "var(--amber)" },
+  { id: "Almuerzo", jp: "昼", tone: "var(--red)" },
   { id: "Merienda", jp: "間", tone: "#9b6bd2" },
-  { id: "Cena", jp: "夜", tone: "#3f7d6e" },
+  { id: "Cena", jp: "夜", tone: "var(--teal)" },
 ];
 
 function tonoDe(tipo: string) {
-  return TIPOS.find((t) => t.id === tipo)?.tone || "#e8a13a";
+  return TIPOS.find((t) => t.id === tipo)?.tone || "var(--amber)";
 }
 function jpDe(tipo: string) {
   return TIPOS.find((t) => t.id === tipo)?.jp || "食";
@@ -145,7 +145,6 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
         <span className="top-jp">食事</span>
       </header>
 
-
       {/* RESUMEN DE CALORÍAS */}
       <section className="panel resumen">
         <div className="resumen-top">
@@ -201,7 +200,7 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
                 <button
                   key={t.id}
                   className={`tipo-btn ${tipo === t.id ? "on" : ""}`}
-                  style={{ borderColor: tipo === t.id ? t.tone : "#0d0805", color: tipo === t.id ? t.tone : "#b09a7e" }}
+                  style={{ borderColor: tipo === t.id ? t.tone : "var(--ink)", color: tipo === t.id ? t.tone : "var(--mut)" }}
                   onClick={() => setTipo(t.id)}
                 >
                   {t.jp} {t.id}
@@ -450,7 +449,7 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
                   aria-label="Favorito"
                   title={esFav ? "Quitar de favoritos" : "Añadir a favoritos"}
                 >
-                  <Star size={16} fill={esFav ? "#e8a13a" : "none"} />
+                  <Star size={16} fill={esFav ? "var(--amber)" : "none"} />
                 </button>
                 <button className="del-btn" onClick={() => borrar(c.id)} aria-label="Borrar">
                   <Trash2 size={16} />
@@ -467,21 +466,17 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
 const CSS = `
   * { box-sizing: border-box; margin: 0; }
   .app {
-    --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;
-    --paper:#f6e9c8; --ink:#0d0805;
-    --red:#d23b2e; --amber:#e8a13a; --gold:#d4a84a;
-    --txt:#f3e6cd; --mut:#b09a7e;
     max-width:460px; margin:0 auto; padding:16px 14px 32px;
     color:var(--txt); min-height:100vh; position:relative; overflow-x:hidden;
     font-family:'Zen Kaku Gothic New', sans-serif; font-weight:500;
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 8%, #5a2a1e 0%, transparent 45%),
+      radial-gradient(circle at 50% 8%, var(--glow) 0%, transparent 45%),
       linear-gradient(165deg, var(--bg2), var(--bg1));
   }
   .top { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
   .back { width:38px; height:38px; border-radius:10px; border:2px solid var(--ink);
-    background:linear-gradient(160deg,#341f18,#26150f); color:var(--paper);
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); color:var(--paper);
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
   .top-title { font-family:'Bebas Neue'; font-size:28px; letter-spacing:2px; color:var(--paper); flex:1; }
   .top-jp { font-size:12px; color:var(--mut); letter-spacing:2px; }
@@ -497,32 +492,32 @@ const CSS = `
   .resumen-num em { font-size:15px; color:var(--mut); font-style:normal; }
   .resumen-count { display:flex; flex-direction:column; align-items:center; font-family:'Bebas Neue';
     font-size:24px; color:var(--amber); border:2px solid var(--ink); border-radius:6px; padding:6px 12px;
-    background:#241410; line-height:1; }
+    background:var(--bg2); line-height:1; }
   .resumen-count svg { color:var(--red); }
   .resumen-count span { font-size:9px; color:var(--mut); letter-spacing:1px; font-family:'Zen Kaku Gothic New'; margin-top:3px; }
-  .resumen-bar { height:12px; background:#241410; border:2px solid var(--ink); border-radius:3px; overflow:hidden; }
+  .resumen-bar { height:12px; background:var(--bg2); border:2px solid var(--ink); border-radius:3px; overflow:hidden; }
   .resumen-fill { height:100%; background:repeating-linear-gradient(45deg, var(--amber) 0 7px, var(--red) 7px 14px); transition:width .3s; }
 
   .card-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
   .card-title { font-family:'Bebas Neue'; font-size:21px; letter-spacing:2px; color:var(--paper);
     border-bottom:3px solid var(--red); padding-bottom:5px; }
   .add-btn { width:34px; height:34px; border-radius:6px; cursor:pointer; color:var(--paper);
-    background:linear-gradient(135deg,var(--red),#7a1d13); border:2px solid var(--ink);
+    background:linear-gradient(135deg,var(--red),var(--red)); border:2px solid var(--ink);
     display:flex; align-items:center; justify-content:center; box-shadow:2px 2px 0 var(--ink); flex-shrink:0; }
 
   /* FORMULARIO */
-  .form { background:#241410; border:2px solid var(--amber); border-radius:8px; padding:12px; margin-bottom:14px;
+  .form { background:var(--bg2); border:2px solid var(--amber); border-radius:8px; padding:12px; margin-bottom:14px;
     display:flex; flex-direction:column; gap:10px; }
   .tipo-row { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
   .tipo-btn { font-family:'Bebas Neue'; font-size:12px; letter-spacing:.5px; padding:8px 2px;
-    border:2px solid; border-radius:5px; cursor:pointer; background:#241410; transition:.12s; }
-  .form-input { background:#241410; border:2px solid var(--ink); border-radius:6px; padding:10px;
+    border:2px solid; border-radius:5px; cursor:pointer; background:var(--bg2); transition:.12s; }
+  .form-input { background:var(--bg2); border:2px solid var(--ink); border-radius:6px; padding:10px;
     color:var(--paper); font-family:'Zen Kaku Gothic New'; font-size:14px; font-weight:700; outline:none; width:100%; }
   .form-input:focus { border-color:var(--amber); }
   .form-bottom { display:flex; gap:8px; }
   .form-input.kcal { width:90px; flex-shrink:0; }
   .confirm-btn { flex:1; font-family:'Bebas Neue'; font-size:17px; letter-spacing:1px; color:var(--paper);
-    cursor:pointer; background:linear-gradient(95deg,var(--red),#a02619); border:2px solid var(--ink);
+    cursor:pointer; background:linear-gradient(95deg,var(--red),var(--red)); border:2px solid var(--ink);
     border-radius:6px; box-shadow:2px 2px 0 var(--ink); transition:.1s; }
   .confirm-btn:active { transform:translate(2px,2px); box-shadow:none; }
 
@@ -530,11 +525,11 @@ const CSS = `
   .modo-row { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
   .modo-btn { font-family:'Bebas Neue'; font-size:14px; letter-spacing:1px; padding:9px 4px;
     border:2px solid var(--ink); border-radius:8px; cursor:pointer; color:var(--mut);
-    background:#241410; transition:.12s; }
-  .modo-btn.on { color:#fff; background:linear-gradient(135deg,var(--red),#7a1d13); border-color:var(--amber); }
+    background:var(--bg2); transition:.12s; }
+  .modo-btn.on { color:#fff; background:linear-gradient(135deg,var(--red),var(--red)); border-color:var(--amber); }
 
   /* BUSCADOR */
-  .buscador { display:flex; align-items:center; gap:8px; background:#241410; border:2px solid var(--ink);
+  .buscador { display:flex; align-items:center; gap:8px; background:var(--bg2); border:2px solid var(--ink);
     border-radius:8px; padding:9px 11px; }
   .buscador svg { color:var(--mut); flex-shrink:0; }
   .buscador input { flex:1; background:none; border:none; outline:none; color:var(--paper);
@@ -543,45 +538,45 @@ const CSS = `
   /* CATEGORÍAS */
   .cat-row { display:flex; gap:6px; overflow-x:auto; padding-bottom:3px; }
   .cat-btn { font-size:11px; font-weight:700; white-space:nowrap; padding:7px 11px; border-radius:20px;
-    border:2px solid var(--ink); cursor:pointer; color:var(--mut); background:#241410; transition:.12s; flex-shrink:0; }
+    border:2px solid var(--ink); cursor:pointer; color:var(--mut); background:var(--bg2); transition:.12s; flex-shrink:0; }
   .cat-btn.on { color:#fff; background:var(--red); border-color:var(--amber); }
 
   /* LISTA DE ALIMENTOS */
   .alim-lista { display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto; }
   .alim-vacio { font-size:12px; color:var(--mut); text-align:center; padding:10px; }
   .alim-item { display:flex; justify-content:space-between; align-items:center; cursor:pointer;
-    background:#241410; border:2px solid var(--ink); border-radius:8px; padding:10px 12px; transition:.12s; text-align:left; }
+    background:var(--bg2); border:2px solid var(--ink); border-radius:8px; padding:10px 12px; transition:.12s; text-align:left; }
   .alim-item.on { border-color:var(--amber); }
   .alim-nombre { font-size:13px; font-weight:700; color:var(--paper); }
   .alim-kcal { font-size:11px; color:var(--amber); font-weight:700; flex-shrink:0; }
 
   /* CÁLCULO */
-  .calc { background:#241410; border:2px solid var(--amber); border-radius:8px; padding:12px;
+  .calc { background:var(--bg2); border:2px solid var(--amber); border-radius:8px; padding:12px;
     display:flex; flex-direction:column; gap:10px; }
   .calc-titulo { font-size:13px; font-weight:900; color:var(--paper); }
   .cant-row { display:flex; gap:6px; flex-wrap:wrap; }
   .cant-btn { font-size:12px; font-weight:700; padding:7px 10px; border-radius:8px; cursor:pointer;
-    border:2px solid var(--ink); color:var(--mut); background:#2a1812; transition:.12s; }
+    border:2px solid var(--ink); color:var(--mut); background:var(--panel); transition:.12s; }
   .cant-btn.on { color:#fff; background:var(--amber); border-color:var(--amber); }
   .calc-total { display:flex; align-items:center; gap:8px; font-family:'Bebas Neue'; font-size:28px;
     color:var(--amber); justify-content:center; }
   .calc-total svg { color:var(--red); }
 
   /* PLATO EN CONSTRUCCIÓN */
-  .plato { background:#1c1410; border:2px solid var(--amber); border-radius:8px; padding:12px;
+  .plato { background:var(--bg2); border:2px solid var(--amber); border-radius:8px; padding:12px;
     display:flex; flex-direction:column; gap:8px; }
   .plato-titulo { font-family:'Bebas Neue'; font-size:16px; letter-spacing:1px; color:var(--amber); }
-  .plato-item { display:flex; align-items:center; gap:8px; background:#241410;
+  .plato-item { display:flex; align-items:center; gap:8px; background:var(--bg2);
     border:2px solid var(--ink); border-radius:6px; padding:8px 10px; }
   .plato-nombre { flex:1; font-size:12px; font-weight:700; color:var(--paper);
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .plato-kcal { font-family:'Bebas Neue'; font-size:15px; color:var(--amber); flex-shrink:0; }
   .plato-x { width:24px; height:24px; border-radius:5px; cursor:pointer; color:var(--mut);
-    background:#1c1410; border:2px solid var(--ink); display:flex; align-items:center; justify-content:center;
+    background:var(--bg2); border:2px solid var(--ink); display:flex; align-items:center; justify-content:center;
     flex-shrink:0; }
   .plato-x:hover { color:var(--red); border-color:var(--red); }
   .plato-total { display:flex; justify-content:space-between; align-items:center; padding:8px 4px 2px;
-    border-top:2px dashed #3a241c; margin-top:2px; }
+    border-top:2px dashed var(--panel2); margin-top:2px; }
   .plato-total span { font-size:12px; letter-spacing:2px; color:var(--mut); font-weight:700; }
   .plato-total b { font-family:'Bebas Neue'; font-size:26px; letter-spacing:1px; color:var(--paper); }
   .guardar-plato { margin-top:4px; }
@@ -589,9 +584,9 @@ const CSS = `
   /* LISTA */
   .meals { display:flex; flex-direction:column; gap:9px; }
   .vacio { font-size:13px; color:var(--mut); text-align:center; padding:16px 8px; }
-  .meal { display:flex; align-items:center; gap:11px; background:#341f18;
+  .meal { display:flex; align-items:center; gap:11px; background:var(--panel2);
     border:2px solid var(--ink); border-radius:6px; padding:10px; }
-  .meal-tag { width:36px; height:36px; border-radius:6px; border:2px solid; background:#241410;
+  .meal-tag { width:36px; height:36px; border-radius:6px; border:2px solid; background:var(--bg2);
     display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:900; flex-shrink:0; }
   .meal-info { flex:1; display:flex; flex-direction:column; min-width:0; }
   .meal-info b { font-size:14px; font-weight:900; color:var(--paper); }
@@ -600,13 +595,13 @@ const CSS = `
   .meal-kcal { font-family:'Bebas Neue'; font-size:19px; letter-spacing:1px; color:var(--amber); flex-shrink:0; }
   .meal-kcal small { font-size:9px; color:var(--mut); margin-left:2px; }
   .del-btn { width:30px; height:30px; border-radius:6px; cursor:pointer; color:var(--mut);
-    background:#241410; border:2px solid var(--ink); display:flex; align-items:center; justify-content:center;
+    background:var(--bg2); border:2px solid var(--ink); display:flex; align-items:center; justify-content:center;
     flex-shrink:0; transition:.12s; }
   .del-btn:hover { color:var(--red); border-color:var(--red); }
 
   /* ★ Botón favorito en cada comida */
   .fav-btn { width:30px; height:30px; border-radius:6px; cursor:pointer; color:var(--mut);
-    background:#241410; border:2px solid var(--ink); display:flex; align-items:center; justify-content:center;
+    background:var(--bg2); border:2px solid var(--ink); display:flex; align-items:center; justify-content:center;
     flex-shrink:0; transition:.12s; margin-right:4px; }
   .fav-btn:hover { color:var(--amber); border-color:var(--amber); }
   .fav-btn.on { color:var(--amber); border-color:var(--amber); }
@@ -615,7 +610,7 @@ const CSS = `
   .fav-hint { font-size:12px; color:var(--mut); margin-bottom:10px; font-style:italic; }
   .fav-list { display:flex; flex-direction:column; gap:7px; }
   .fav-chip { display:flex; align-items:center; gap:10px; padding:10px 12px; cursor:pointer; text-align:left;
-    background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink); border-radius:6px;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid var(--ink); border-radius:6px;
     color:var(--paper); transition:.12s; }
   .fav-chip:hover { transform:translateY(-1px); box-shadow:2px 2px 0 #00000055; }
   .fav-chip:active { transform:translate(2px,2px); }
@@ -626,13 +621,13 @@ const CSS = `
   /* RECETAS — filtros y lista */
   .rec-filtros { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
   .rec-filtro { font-size:11px; font-weight:700; padding:6px 11px; border-radius:14px; cursor:pointer;
-    background:#241410; border:2px solid var(--ink); color:var(--mut); transition:.12s; }
+    background:var(--bg2); border:2px solid var(--ink); color:var(--mut); transition:.12s; }
   .rec-filtro:hover { color:var(--amber); border-color:var(--amber); }
-  .rec-filtro.on { background:linear-gradient(95deg,var(--red),#a02619); color:var(--paper); border-color:var(--ink); }
+  .rec-filtro.on { background:linear-gradient(95deg,var(--red),var(--red)); color:var(--paper); border-color:var(--ink); }
 
   .rec-lista { display:flex; flex-direction:column; gap:8px; max-height:430px; overflow-y:auto; padding-right:4px; }
   .rec-card { display:flex; align-items:center; gap:12px; padding:11px 12px; cursor:pointer; text-align:left;
-    background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink); border-radius:7px;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid var(--ink); border-radius:7px;
     color:var(--paper); transition:.12s; }
   .rec-card:hover { border-color:var(--amber); transform:translateY(-1px); }
   .rec-card:active { transform:translate(2px,2px); }
@@ -645,7 +640,7 @@ const CSS = `
   .rec-detalle { display:flex; flex-direction:column; gap:10px; }
   .rec-volver { background:none; border:none; color:var(--amber); font-size:13px; font-weight:700; cursor:pointer;
     text-align:left; padding:4px 0; align-self:flex-start; }
-  .rec-cabecera { display:flex; gap:12px; align-items:center; background:#241410; border:2px solid var(--ink);
+  .rec-cabecera { display:flex; gap:12px; align-items:center; background:var(--bg2); border:2px solid var(--ink);
     border-radius:7px; padding:12px; }
   .rec-emoji-big { font-size:48px; flex-shrink:0; }
   .rec-titulo { font-family:'Bebas Neue'; font-size:22px; letter-spacing:1px; color:var(--paper); line-height:1; margin-bottom:4px; }

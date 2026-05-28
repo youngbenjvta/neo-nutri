@@ -6,6 +6,7 @@ import { usePerfilNube } from "./usePerfilNube";
 import { useProgreso } from "./useProgreso";
 import { useRacha } from "./useRacha";
 import { usePersistedState } from "./usePersistedState";
+import { TEMAS, useTema } from "./temas";
 
 // ============================================================
 //  NUT-KAIZEN — PERFIL (shonen pintado)
@@ -46,6 +47,9 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }
 
   // Nivel de gym (lo usa la pantalla de Rutinas para limitar ejercicios)
   const [nivelGym, setNivelGym] = usePersistedState("perfil.nivelGym", "prin");
+
+  // Sistema de temas (skins)
+  const { temaActual, setTema } = useTema();
 
   // Foto de perfil (guardada en el dispositivo como texto base64)
   const [foto, setFoto] = usePersistedState("perfil.foto", "");
@@ -198,6 +202,30 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }
         <p className="hint">Define cuántos ejercicios verás en tus rutinas. Principiante: 2 · Intermedio: 4 · Avanzado: 6. 🥋</p>
       </section>
 
+      {/* TEMA / SKIN */}
+      <section className="panel">
+        <h2 className="card-title">色 TEMA</h2>
+        <div className="tema-grid">
+          {TEMAS.map((t) => (
+            <button
+              key={t.id}
+              className={`tema-card ${temaActual.id === t.id ? "on" : ""}`}
+              onClick={() => setTema(t.id)}
+            >
+              <div className="tema-preview" style={{ background: t.vars["--t-bg2"] }}>
+                <span className="tema-dot" style={{ background: t.vars["--t-red"] }} />
+                <span className="tema-dot" style={{ background: t.vars["--t-amber"] }} />
+                <span className="tema-dot" style={{ background: t.vars["--t-paper"] }} />
+              </div>
+              <span className="tema-emoji">{t.emoji}</span>
+              <b className="tema-nombre">{t.nombre}</b>
+              <span className="tema-desc">{t.descripcion}</span>
+            </button>
+          ))}
+        </div>
+        <p className="hint">Personaliza el look de tu KAIZEN. Tu elección se guarda. 🎨</p>
+      </section>
+
       {/* FORMULARIO DE METAS */}
       <section className="panel">
         <h2 className="card-title">目 TUS METAS</h2>
@@ -259,21 +287,17 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }
 const CSS = `
   * { box-sizing: border-box; margin: 0; }
   .app {
-    --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;
-    --paper:#f6e9c8; --ink:#0d0805;
-    --red:#d23b2e; --amber:#e8a13a; --gold:#d4a84a;
-    --txt:#f3e6cd; --mut:#b09a7e;
     max-width:460px; margin:0 auto; padding:16px 14px 32px;
     color:var(--txt); min-height:100vh; position:relative; overflow-x:hidden;
     font-family:'Zen Kaku Gothic New', sans-serif; font-weight:500;
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 8%, #5a2a1e 0%, transparent 45%),
+      radial-gradient(circle at 50% 8%, var(--glow) 0%, transparent 45%),
       linear-gradient(165deg, var(--bg2), var(--bg1));
   }
   .top { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
   .back { width:38px; height:38px; border-radius:6px; border:2px solid var(--ink);
-    background:#241410; color:var(--paper);
+    background:var(--bg2); color:var(--paper);
     display:flex; align-items:center; justify-content:center; cursor:pointer; }
   .top-title { font-family:'Bebas Neue'; font-size:30px; letter-spacing:2px; color:var(--paper); flex:1; }
   .top-jp { font-size:12px; color:var(--mut); letter-spacing:2px; }
@@ -292,27 +316,27 @@ const CSS = `
   .foto-img { width:110px; height:110px; border-radius:50%; object-fit:cover;
     border:3px solid var(--amber); box-shadow:0 4px 14px #00000066; }
   .foto-vacia { width:110px; height:110px; border-radius:50%; border:3px dashed var(--mut);
-    background:#241410; display:flex; align-items:center; justify-content:center; color:var(--mut); }
+    background:var(--bg2); display:flex; align-items:center; justify-content:center; color:var(--mut); }
   .foto-btn { position:absolute; bottom:0; right:0; width:34px; height:34px; border-radius:50%;
-    background:linear-gradient(135deg,var(--red),#7a1d13); border:2px solid var(--ink); color:var(--paper);
+    background:linear-gradient(135deg,var(--red),var(--red)); border:2px solid var(--ink); color:var(--paper);
     display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:2px 2px 0 var(--ink); }
   .foto-quitar { display:inline-flex; align-items:center; gap:4px; margin-top:6px; font-size:11px;
     color:var(--mut); background:none; border:none; cursor:pointer; }
   .foto-quitar:hover { color:var(--red); }
   .current-frame { width:140px; height:175px; margin:0 auto 10px; border:3px solid; border-radius:14px;
-    background:#241410; display:flex; align-items:center; justify-content:center; padding:6px;
+    background:var(--bg2); display:flex; align-items:center; justify-content:center; padding:6px;
     box-shadow:0 4px 14px #00000066; }
   .current-name { font-family:'Bebas Neue'; font-size:26px; letter-spacing:2px; color:var(--paper); }
   .current-belt { font-size:14px; color:var(--mut); margin-top:3px; }
   .current-belt b { font-family:'Bebas Neue'; font-size:17px; letter-spacing:1px; }
-  .belt-bar { height:8px; background:#1a0f0a; border:2px solid var(--ink); border-radius:4px;
+  .belt-bar { height:8px; background:var(--bg1); border:2px solid var(--ink); border-radius:4px;
     overflow:hidden; margin:9px auto 7px; max-width:220px; }
   .belt-fill { height:100%; transition:width .4s; }
   .current-sub { font-size:12px; color:var(--mut); }
 
   .genero-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .genero-opt { display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;
-    background:#241410; border:2px solid var(--ink); border-radius:8px; padding:12px; transition:.12s; }
+    background:var(--bg2); border:2px solid var(--ink); border-radius:8px; padding:12px; transition:.12s; }
   .genero-opt:hover { transform:translateY(-2px); }
   .genero-opt.on { border-color:var(--amber); box-shadow:0 0 0 1px var(--amber); }
   .genero-opt span { display:flex; align-items:center; gap:4px; font-size:13px; font-weight:700; color:var(--paper); }
@@ -321,19 +345,32 @@ const CSS = `
   .obj-row { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
   .obj-btn { font-family:'Bebas Neue'; font-size:16px; letter-spacing:1px; padding:12px 4px;
     border:2px solid var(--ink); border-radius:6px; cursor:pointer; color:var(--mut);
-    background:#241410; transition:.12s; }
-  .obj-btn.on { color:var(--paper); background:linear-gradient(135deg,var(--red),#7a1d13); border-color:var(--amber); }
+    background:var(--bg2); transition:.12s; }
+  .obj-btn.on { color:var(--paper); background:linear-gradient(135deg,var(--red),var(--red)); border-color:var(--amber); }
+
+  /* Selector de temas */
+  .tema-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .tema-card { display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 6px; cursor:pointer;
+    background:var(--panel2); border:2px solid var(--ink); border-radius:8px; transition:.12s; color:var(--txt); }
+  .tema-card:hover { border-color:var(--amber); }
+  .tema-card.on { border-color:var(--amber); box-shadow:0 0 0 2px var(--amber) inset; }
+  .tema-preview { display:flex; gap:3px; padding:6px 8px; border-radius:5px; margin-bottom:2px;
+    border:1px solid var(--ink); }
+  .tema-dot { width:8px; height:8px; border-radius:50%; }
+  .tema-emoji { font-size:18px; }
+  .tema-nombre { font-family:'Bebas Neue'; font-size:13px; letter-spacing:1px; color:var(--paper); }
+  .tema-desc { font-size:9px; color:var(--mut); text-align:center; line-height:1.2; }
 
   .form { display:flex; flex-direction:column; gap:12px; }
   .field { display:flex; flex-direction:column; gap:5px; flex:1; }
   .field span { font-size:11px; letter-spacing:1.5px; color:var(--mut); font-weight:700; }
-  .field input { background:#241410; border:2px solid var(--ink); border-radius:6px; padding:10px;
+  .field input { background:var(--bg2); border:2px solid var(--ink); border-radius:6px; padding:10px;
     color:var(--paper); font-family:'Zen Kaku Gothic New'; font-size:15px; font-weight:700; outline:none; }
   .field input:focus { border-color:var(--amber); }
   .field-row { display:flex; gap:10px; }
 
   .save-btn { width:100%; margin-top:16px; font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px;
-    color:var(--paper); cursor:pointer; background:linear-gradient(95deg,var(--red),#a02619);
+    color:var(--paper); cursor:pointer; background:linear-gradient(95deg,var(--red),var(--red));
     border:2px solid var(--ink); padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; }
   .save-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .logros-btn { width:100%; font-family:'Bebas Neue'; font-size:19px; letter-spacing:2px; color:var(--ink);
@@ -341,11 +378,11 @@ const CSS = `
     padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-bottom:11px; }
   .logros-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .compartir-btn { width:100%; font-family:'Bebas Neue'; font-size:18px; letter-spacing:2px; color:var(--paper);
-    cursor:pointer; background:linear-gradient(95deg,#3f7d6e,#2c5d51); border:2px solid var(--ink);
+    cursor:pointer; background:linear-gradient(95deg,var(--teal),#2c5d51); border:2px solid var(--ink);
     padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-bottom:11px; }
   .compartir-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .logout-btn { width:100%; font-family:'Bebas Neue'; font-size:17px; letter-spacing:2px; color:var(--mut);
-    cursor:pointer; background:#241410; border:2px solid var(--ink); padding:11px; border-radius:6px;
+    cursor:pointer; background:var(--bg2); border:2px solid var(--ink); padding:11px; border-radius:6px;
     transition:.12s; }
   .logout-btn:hover { color:var(--red); border-color:var(--red); }
 `;

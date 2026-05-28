@@ -195,18 +195,16 @@ export default function Login({ onEntrar }: { onEntrar?: () => void }) {
 const CSS = `
   * { box-sizing: border-box; margin: 0; }
   .auth {
-    --paper:#f6e9c8; --ink:#0d0805; --red:#d23b2e; --amber:#e8a13a; --gold:#d4a84a;
-    --txt:#f3e6cd; --mut:#b09a7e;
     min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;
     font-family:'Zen Kaku Gothic New', sans-serif; color:var(--txt);
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 20%, #5a2a1e 0%, transparent 55%),
-      linear-gradient(165deg, #241410, #1a0f0a);
+      radial-gradient(circle at 50% 20%, var(--glow) 0%, transparent 55%),
+      linear-gradient(165deg, var(--bg2), var(--bg1));
   }
   .auth-box {
     width:100%; max-width:400px;
-    background:linear-gradient(160deg,#32201a,#2a1812);
+    background:linear-gradient(160deg,var(--panel2),var(--panel));
     border:2px solid var(--ink); border-radius:10px; padding:28px 22px;
     box-shadow:6px 6px 0 #00000066;
   }
@@ -217,17 +215,17 @@ const CSS = `
   .auth-jp { font-size:11px; color:var(--mut); letter-spacing:3px; }
   .auth-tagline { text-align:center; font-size:13px; color:var(--mut); margin:10px 0 20px; }
   .auth-yuns { display:flex; align-items:center; gap:10px; margin:14px 0 4px;
-    background:#1c1410; border:2px solid var(--ink); border-radius:10px; padding:10px; }
+    background:var(--bg2); border:2px solid var(--ink); border-radius:10px; padding:10px; }
   .auth-yuns-bocadillo { flex:1; font-size:12px; font-weight:700; color:var(--paper); line-height:1.35;
     text-align:left; }
 
   .auth-tabs { display:grid; grid-template-columns:1fr 1fr; gap:7px; margin-bottom:18px; }
   .auth-tab { font-family:'Bebas Neue'; font-size:14px; letter-spacing:1px; padding:10px 4px;
     border:2px solid var(--ink); border-radius:6px; cursor:pointer; color:var(--mut);
-    background:#241410; transition:.12s; }
-  .auth-tab.on { color:var(--paper); background:linear-gradient(135deg,var(--red),#7a1d13); border-color:var(--amber); }
+    background:var(--bg2); transition:.12s; }
+  .auth-tab.on { color:var(--paper); background:linear-gradient(135deg,var(--red),var(--red)); border-color:var(--amber); }
 
-  .auth-field { display:flex; align-items:center; gap:9px; background:#1c1410;
+  .auth-field { display:flex; align-items:center; gap:9px; background:var(--bg2);
     border:2px solid var(--ink); border-radius:6px; padding:11px 12px; margin-bottom:11px; }
   .auth-field svg { color:var(--mut); flex-shrink:0; }
   .auth-field input { flex:1; background:none; border:none; outline:none; color:var(--paper);
@@ -237,13 +235,13 @@ const CSS = `
     align-items:center; padding:0; flex-shrink:0; transition:.12s; }
   .ver-pass:hover { color:var(--amber); }
 
-  .auth-error { font-size:13px; color:#ff6b5e; background:#3a1410; border:2px solid #d23b2e;
+  .auth-error { font-size:13px; color:#ff6b5e; background:#3a1410; border:2px solid var(--red);
     border-radius:6px; padding:9px 11px; margin-bottom:11px; }
-  .auth-ok { font-size:13px; color:#7fd6a0; background:#10301f; border:2px solid #3f7d6e;
+  .auth-ok { font-size:13px; color:#7fd6a0; background:#10301f; border:2px solid var(--teal);
     border-radius:6px; padding:9px 11px; margin-bottom:11px; }
 
   .auth-btn { width:100%; font-family:'Bebas Neue'; font-size:21px; letter-spacing:2px; color:var(--paper);
-    cursor:pointer; background:linear-gradient(95deg,var(--red),#a02619); border:2px solid var(--ink);
+    cursor:pointer; background:linear-gradient(95deg,var(--red),var(--red)); border:2px solid var(--ink);
     padding:13px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-top:4px; }
   .auth-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .auth-btn:disabled { opacity:.6; cursor:default; }

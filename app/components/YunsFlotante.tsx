@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { YunsSVG } from "./Yuns";
 
 // ============================================================
-//  NEO NUTRI — YUNS FLOTANTE
+//  NUT-KAIZEN — YUNS FLOTANTE
 //  Botón flotante arrastrable. Al tocarlo (sin arrastrar)
 //  muestra un consejo en una burbuja. Recuerda su posición.
 // ============================================================
@@ -123,20 +123,20 @@ export default function YunsFlotante() {
 const CSS = `
   .yunsflo-wrap { position:fixed; z-index:9999; touch-action:none; }
   .yunsflo-btn { width:64px; height:64px; border-radius:50%; cursor:grab;
-    background:linear-gradient(160deg,#32201a,#2a1812); border:3px solid #e8a13a;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); border:3px solid var(--amber);
     box-shadow:0 4px 14px #00000088; display:flex; align-items:center; justify-content:center;
     padding:0; user-select:none; -webkit-user-select:none; transition:transform .1s; }
   .yunsflo-btn:active { cursor:grabbing; transform:scale(.92); }
   .yunsflo-burbuja { position:absolute; bottom:72px; width:200px;
-    background:#1c1410; border:2px solid #e8a13a; border-radius:12px; padding:11px 13px;
+    background:var(--bg2); border:2px solid var(--amber); border-radius:12px; padding:11px 13px;
     box-shadow:0 6px 20px #000000aa; animation:yunsPop .18s ease; }
   .yunsflo-burbuja.der { left:0; }
   .yunsflo-burbuja.izq { right:0; }
   .yunsflo-burbuja::after { content:""; position:absolute; bottom:-9px; width:0; height:0;
-    border-left:8px solid transparent; border-right:8px solid transparent; border-top:9px solid #e8a13a; }
+    border-left:8px solid transparent; border-right:8px solid transparent; border-top:9px solid var(--amber); }
   .yunsflo-burbuja.der::after { left:24px; }
   .yunsflo-burbuja.izq::after { right:24px; }
-  .yunsflo-hola { font-family:'Bebas Neue'; font-size:13px; letter-spacing:2px; color:#e8a13a; margin-bottom:3px; }
-  .yunsflo-frase { font-size:12.5px; font-weight:700; color:#f3e6cd; line-height:1.35; }
+  .yunsflo-hola { font-family:'Bebas Neue'; font-size:13px; letter-spacing:2px; color:var(--amber); margin-bottom:3px; }
+  .yunsflo-frase { font-size:12.5px; font-weight:700; color:var(--txt); line-height:1.35; }
   @keyframes yunsPop { from { opacity:0; transform:translateY(6px) scale(.9); } to { opacity:1; transform:none; } }
 `;

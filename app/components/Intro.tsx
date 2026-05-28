@@ -87,14 +87,12 @@ export default function Intro({ onListo }: { onListo?: () => void }) {
 const CSS = `
   * { box-sizing:border-box; margin:0; }
   .intro {
-    --paper:#f6e9c8; --ink:#0d0805; --red:#d23b2e; --amber:#e8a13a;
-    --txt:#f3e6cd; --mut:#b09a7e;
     position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center;
     padding:24px; font-family:'Zen Kaku Gothic New', sans-serif; color:var(--txt);
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 22%, #5a2a1e 0%, transparent 55%),
-      linear-gradient(165deg, #241410, #1a0f0a);
+      radial-gradient(circle at 50% 22%, var(--glow) 0%, transparent 55%),
+      linear-gradient(165deg, var(--bg2), var(--bg1));
   }
   .intro-skip { position:absolute; top:20px; right:20px; background:none; border:none;
     color:var(--mut); font-size:14px; font-weight:700; cursor:pointer; padding:8px; }
@@ -112,7 +110,7 @@ const CSS = `
   .dot.on { background:var(--amber); width:24px; border-radius:5px; }
   .intro-btn { display:inline-flex; align-items:center; gap:8px; font-family:'Bebas Neue'; font-size:21px;
     letter-spacing:2px; color:var(--paper); cursor:pointer;
-    background:linear-gradient(95deg,var(--red),#a02619); border:2px solid var(--ink);
+    background:linear-gradient(95deg,var(--red),var(--red)); border:2px solid var(--ink);
     padding:13px 38px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; }
   .intro-btn:active { transform:translate(3px,3px); box-shadow:none; }
 `;

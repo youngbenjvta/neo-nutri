@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 
 // ============================================================
-//  NEO NUTRI — YUNS, el zorro kitsune naturalista (mascota)
+//  NUT-KAIZEN — YUNS, el zorro kitsune naturalista (mascota)
 //  Estilo ilustración de zorro real, con lentes redondos.
 //  Dibujado 100% en SVG (original, sin copyright).
 // ============================================================
@@ -136,17 +136,17 @@ export default function Yuns({ nombre = "GUERRERO" }: { nombre?: string }) {
 
 const CSS = `
   .yuns-card { display:flex; align-items:center; gap:12px; cursor:pointer;
-    background:linear-gradient(160deg,#32201a,#2a1812); border:2px solid #0d0805; border-radius:8px;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid var(--ink); border-radius:8px;
     padding:14px; margin-bottom:14px; box-shadow:4px 4px 0 #00000055; transition:transform .12s; }
   .yuns-card:active { transform:scale(.98); }
   .yuns-fig { flex-shrink:0; filter:drop-shadow(2px 3px 0 #00000044); }
-  .yuns-bocadillo { flex:1; position:relative; background:#1c1410; border:2px solid #e8a13a;
+  .yuns-bocadillo { flex:1; position:relative; background:var(--bg2); border:2px solid var(--amber);
     border-radius:10px; padding:10px 12px; }
   .yuns-bocadillo::before { content:""; position:absolute; left:-9px; top:50%; transform:translateY(-50%);
     width:0; height:0; border-top:7px solid transparent; border-bottom:7px solid transparent;
-    border-right:9px solid #e8a13a; }
-  .yuns-hola { font-family:'Bebas Neue'; font-size:14px; letter-spacing:2px; color:#e8a13a; margin-bottom:3px; }
-  .yuns-frase { font-size:13px; font-weight:700; color:#f3e6cd; line-height:1.35; }
+    border-right:9px solid var(--amber); }
+  .yuns-hola { font-family:'Bebas Neue'; font-size:14px; letter-spacing:2px; color:var(--amber); margin-bottom:3px; }
+  .yuns-frase { font-size:13px; font-weight:700; color:var(--txt); line-height:1.35; }
 `;
 
 // Versión COMPACTA de Yuns con un consejo fijo (para otras pantallas)
@@ -162,7 +162,7 @@ export function YunsTip({ consejo }: { consejo: string }) {
 
 const TIP_CSS = `
   .yunstip { display:flex; align-items:center; gap:10px;
-    background:linear-gradient(160deg,#32201a,#2a1812); border:2px solid #0d0805; border-radius:8px;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid var(--ink); border-radius:8px;
     padding:10px 12px; margin-bottom:14px; box-shadow:3px 3px 0 #00000044; }
-  .yunstip .yunstip-txt { flex:1; font-size:12px; font-weight:700; color:#f3e6cd; line-height:1.35; }
+  .yunstip .yunstip-txt { flex:1; font-size:12px; font-weight:700; color:var(--txt); line-height:1.35; }
 `;

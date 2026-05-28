@@ -16,18 +16,17 @@ import { calcularIMC } from "./calcularIMC";
 
 type Punto = { dia: string; peso: number };
 
-
 // Metas diarias
 const META_AGUA = 8;      // vasos
 const META_PASOS = 10000; // pasos
-const META_ENTRENOS = 20; // entrenamientos
+const META_ENTRENOS = 1; // entrenar al menos 1 vez hoy
 
 // Barras de progreso (metas diarias)
 // Tooltip personalizado del gráfico (lo que aparece al pasar el dedo/mouse)
 function MiTooltip({ active, payload }: { active?: boolean; payload?: { value: number }[] }) {
   if (active && payload && payload.length) {
     return (
-      <div style={{ background: "#1c1410", border: "2px solid #e8a13a", borderRadius: 6, padding: "6px 10px", color: "#f6e9c8", fontFamily: "'Bebas Neue'", fontSize: 16 }}>
+      <div style={{ background: "var(--bg2)", border: "2px solid var(--amber)", borderRadius: 6, padding: "6px 10px", color: "var(--paper)", fontFamily: "'Bebas Neue'", fontSize: 16 }}>
         {payload[0].value} kg
       </div>
     );
@@ -122,7 +121,6 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
         <span className="top-jp">進捗</span>
       </header>
 
-
       {/* GRÁFICO DE PESO */}
       <section className="panel">
         <div className="peso-head">
@@ -162,17 +160,17 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
           <ResponsiveContainer width="100%" height={180}>
             <LineChart data={historial} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <CartesianGrid stroke="#3a2a20" strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="dia" stroke="#b09a7e" fontSize={10} tickLine={false} interval={0} />
-              <YAxis stroke="#b09a7e" fontSize={11} tickLine={false} domain={["dataMin - 2", "dataMax + 2"]} />
+              <XAxis dataKey="dia" stroke="var(--mut)" fontSize={10} tickLine={false} interval={0} />
+              <YAxis stroke="var(--mut)" fontSize={11} tickLine={false} domain={["dataMin - 2", "dataMax + 2"]} />
               <Tooltip content={<MiTooltip />} />
               {imc && (
-                <ReferenceLine y={imc.pesoIdealMax} stroke="#3f7d6e" strokeDasharray="4 4" />
+                <ReferenceLine y={imc.pesoIdealMax} stroke="var(--teal)" strokeDasharray="4 4" />
               )}
               {imc && (
-                <ReferenceLine y={imc.pesoIdealMin} stroke="#3f7d6e" strokeDasharray="4 4" />
+                <ReferenceLine y={imc.pesoIdealMin} stroke="var(--teal)" strokeDasharray="4 4" />
               )}
-              <Line type="monotone" dataKey="peso" stroke="#e8a13a" strokeWidth={3}
-                dot={{ fill: "#d23b2e", r: 4 }} activeDot={{ r: 6 }} connectNulls />
+              <Line type="monotone" dataKey="peso" stroke="var(--amber)" strokeWidth={3}
+                dot={{ fill: "var(--red)", r: 4 }} activeDot={{ r: 6 }} connectNulls />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -208,11 +206,11 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
           {/* AGUA — con botones +/- */}
           <div className="barra">
             <div className="barra-head">
-              <span className="barra-label"><Droplet size={15} style={{ color: "#3f7d6e" }} /> Agua</span>
+              <span className="barra-label"><Droplet size={15} style={{ color: "var(--teal)" }} /> Agua</span>
               <span className="barra-val">{diario.agua} <em>/ {META_AGUA} vasos</em></span>
             </div>
             <div className="barra-track">
-              <div className="barra-fill" style={{ width: `${Math.min((diario.agua / META_AGUA) * 100, 100)}%`, background: "#3f7d6e" }} />
+              <div className="barra-fill" style={{ width: `${Math.min((diario.agua / META_AGUA) * 100, 100)}%`, background: "var(--teal)" }} />
             </div>
             <div className="agua-ctrl">
               <button onClick={() => actualizar({ ...diario, agua: Math.max(0, diario.agua - 1) })} aria-label="Quitar vaso">
@@ -228,11 +226,11 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
           {/* PASOS — campo editable */}
           <div className="barra">
             <div className="barra-head">
-              <span className="barra-label"><Footprints size={15} style={{ color: "#e8a13a" }} /> Pasos diarios</span>
+              <span className="barra-label"><Footprints size={15} style={{ color: "var(--amber)" }} /> Pasos diarios</span>
               <span className="barra-val">{diario.pasos.toLocaleString()} <em>/ {META_PASOS.toLocaleString()}</em></span>
             </div>
             <div className="barra-track">
-              <div className="barra-fill" style={{ width: `${Math.min((diario.pasos / META_PASOS) * 100, 100)}%`, background: "#e8a13a" }} />
+              <div className="barra-fill" style={{ width: `${Math.min((diario.pasos / META_PASOS) * 100, 100)}%`, background: "var(--amber)" }} />
             </div>
             <div className="pasos-ctrl">
               <input
@@ -247,11 +245,11 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
           {/* ENTRENAMIENTOS — del progreso real (solo lectura) */}
           <div className="barra">
             <div className="barra-head">
-              <span className="barra-label"><Dumbbell size={15} style={{ color: "#d23b2e" }} /> Entrenamientos</span>
-              <span className="barra-val">{prog.entrenos} <em>/ {META_ENTRENOS}</em></span>
+              <span className="barra-label"><Dumbbell size={15} style={{ color: "var(--red)" }} /> Entrenamientos hoy</span>
+              <span className="barra-val">{diario.entrenos} <em>/ {META_ENTRENOS}</em></span>
             </div>
             <div className="barra-track">
-              <div className="barra-fill" style={{ width: `${Math.min((prog.entrenos / META_ENTRENOS) * 100, 100)}%`, background: "#d23b2e" }} />
+              <div className="barra-fill" style={{ width: `${Math.min((diario.entrenos / META_ENTRENOS) * 100, 100)}%`, background: "var(--red)" }} />
             </div>
           </div>
 
@@ -264,21 +262,17 @@ export default function Progreso({ onBack }: { onBack?: () => void }) {
 const CSS = `
   * { box-sizing: border-box; margin: 0; }
   .app {
-    --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;
-    --paper:#f6e9c8; --ink:#0d0805;
-    --red:#d23b2e; --amber:#e8a13a; --gold:#d4a84a; --teal:#3f7d6e;
-    --txt:#f3e6cd; --mut:#b09a7e;
     max-width:460px; margin:0 auto; padding:16px 14px 32px;
     color:var(--txt); min-height:100vh; position:relative; overflow-x:hidden;
     font-family:'Zen Kaku Gothic New', sans-serif; font-weight:500;
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 8%, #5a2a1e 0%, transparent 45%),
+      radial-gradient(circle at 50% 8%, var(--glow) 0%, transparent 45%),
       linear-gradient(165deg, var(--bg2), var(--bg1));
   }
   .top { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
   .back { width:38px; height:38px; border-radius:6px; border:2px solid var(--ink);
-    background:linear-gradient(160deg,#341f18,#26150f); color:var(--paper);
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); color:var(--paper);
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
   .top-title { font-family:'Bebas Neue'; font-size:30px; letter-spacing:2px; color:var(--paper); flex:1; }
   .top-jp { font-size:12px; color:var(--mut); letter-spacing:2px; }
@@ -293,34 +287,34 @@ const CSS = `
   .peso-num { font-family:'Bebas Neue'; font-size:36px; letter-spacing:1px; color:var(--paper); line-height:1; margin-top:3px; }
   .peso-num em { font-size:16px; color:var(--mut); font-style:normal; }
   .peso-diff { display:flex; align-items:center; gap:5px; font-family:'Bebas Neue'; font-size:18px;
-    padding:6px 12px; border:2px solid var(--ink); border-radius:6px; background:#241410; }
+    padding:6px 12px; border:2px solid var(--ink); border-radius:6px; background:var(--bg2); }
   .peso-diff.down { color:var(--teal); }
   .peso-diff.up { color:var(--red); }
   .peso-diff.up svg { transform:rotate(180deg); }
 
   .año-sel { display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:10px; }
   .año-btn { width:34px; height:34px; border-radius:6px; border:2px solid var(--ink); cursor:pointer;
-    background:linear-gradient(160deg,#341f18,#26150f); color:var(--paper); font-size:20px; font-weight:900;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); color:var(--paper); font-size:20px; font-weight:900;
     display:flex; align-items:center; justify-content:center; }
   .año-btn:disabled { opacity:.3; cursor:default; }
   .año-txt { font-family:'Bebas Neue'; font-size:26px; letter-spacing:2px; color:var(--amber); min-width:80px; text-align:center; }
   .peso-ideal { font-size:13px; color:var(--txt); text-align:center; margin-bottom:12px; }
   .peso-ideal b { color:var(--teal); }
-  .yuns-msg { background:#1c1410; border:2px solid var(--amber); border-radius:8px; padding:11px 13px;
+  .yuns-msg { background:var(--bg2); border:2px solid var(--amber); border-radius:8px; padding:11px 13px;
     font-size:13px; font-weight:700; color:var(--paper); text-align:center; margin-top:12px; line-height:1.4; }
 
-  .chart { background:#1c1410; border:2px solid var(--ink); border-radius:8px; padding:10px 6px 4px; margin-bottom:14px; }
+  .chart { background:var(--bg2); border:2px solid var(--ink); border-radius:8px; padding:10px 6px 4px; margin-bottom:14px; }
 
   .reg-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:7px;
     font-family:'Bebas Neue'; font-size:17px; letter-spacing:1px; color:var(--paper); cursor:pointer;
-    background:linear-gradient(95deg,var(--red),#a02619); border:2px solid var(--ink); padding:11px;
+    background:linear-gradient(95deg,var(--red),var(--red)); border:2px solid var(--ink); padding:11px;
     border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; }
   .reg-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .reg-form { display:flex; gap:8px; }
-  .reg-input { flex:1; background:#1c1410; border:2px solid var(--amber); border-radius:6px; padding:10px;
+  .reg-input { flex:1; background:var(--bg2); border:2px solid var(--amber); border-radius:6px; padding:10px;
     color:var(--paper); font-family:'Zen Kaku Gothic New'; font-size:15px; font-weight:700; outline:none; }
   .reg-confirm { font-family:'Bebas Neue'; font-size:17px; letter-spacing:1px; color:var(--paper); cursor:pointer;
-    background:linear-gradient(95deg,var(--red),#a02619); border:2px solid var(--ink); padding:10px 18px;
+    background:linear-gradient(95deg,var(--red),var(--red)); border:2px solid var(--ink); padding:10px 18px;
     border-radius:6px; box-shadow:2px 2px 0 var(--ink); }
   .reg-confirm:active { transform:translate(2px,2px); box-shadow:none; }
 
@@ -332,16 +326,16 @@ const CSS = `
   .barra-label { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:700; color:var(--txt); }
   .barra-val { font-family:'Bebas Neue'; font-size:16px; letter-spacing:.5px; color:var(--paper); }
   .barra-val em { color:var(--mut); font-style:normal; font-size:13px; }
-  .barra-track { height:12px; background:#1a0f0a; border:2px solid var(--ink); border-radius:3px; overflow:hidden; }
+  .barra-track { height:12px; background:var(--bg1); border:2px solid var(--ink); border-radius:3px; overflow:hidden; }
   .barra-fill { height:100%; transition:width .3s; }
   .agua-ctrl { display:flex; align-items:center; justify-content:center; gap:16px; margin-top:9px; }
   .agua-ctrl button { width:36px; height:36px; border-radius:6px; cursor:pointer; color:var(--paper);
-    background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink);
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid var(--ink);
     display:flex; align-items:center; justify-content:center; transition:.12s; }
   .agua-ctrl button:hover { border-color:var(--teal); color:var(--teal); }
   .agua-ctrl span { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:var(--paper); min-width:80px; text-align:center; }
   .pasos-ctrl { margin-top:9px; }
-  .pasos-ctrl input { width:100%; background:#1c1410; border:2px solid var(--ink); border-radius:6px;
+  .pasos-ctrl input { width:100%; background:var(--bg2); border:2px solid var(--ink); border-radius:6px;
     padding:9px 11px; color:var(--paper); font-family:'Zen Kaku Gothic New'; font-size:14px; font-weight:700; outline:none; }
   .pasos-ctrl input:focus { border-color:var(--amber); }
 `;

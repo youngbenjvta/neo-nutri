@@ -56,8 +56,8 @@ function MacroRing({ kcal, kcalMax }: { kcal: number; kcalMax: number }) {
         />
         <defs>
           <linearGradient id="flame" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#e8a13a" />
-            <stop offset="100%" stopColor="#d23b2e" />
+            <stop offset="0%" stopColor="var(--amber)" />
+            <stop offset="100%" stopColor="var(--red)" />
           </linearGradient>
         </defs>
       </svg>
@@ -273,9 +273,9 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <div className="macros">
           <MacroRing kcal={kcalReal} kcalMax={metaKcal} />
           <div className="macro-list">
-            <MacroRow icon={Beef} label="Proteínas" v={macrosReales.protein} max={macrosMeta.protein} tone="#d23b2e" />
-            <MacroRow icon={Wheat} label="Carbohidratos" v={macrosReales.carbs} max={macrosMeta.carbs} tone="#e8a13a" />
-            <MacroRow icon={Droplet} label="Grasas" v={macrosReales.fats} max={macrosMeta.fats} tone="#3f7d6e" />
+            <MacroRow icon={Beef} label="Proteínas" v={macrosReales.protein} max={macrosMeta.protein} tone="var(--red)" />
+            <MacroRow icon={Wheat} label="Carbohidratos" v={macrosReales.carbs} max={macrosMeta.carbs} tone="var(--amber)" />
+            <MacroRow icon={Droplet} label="Grasas" v={macrosReales.fats} max={macrosMeta.fats} tone="var(--teal)" />
           </div>
         </div>
       </section>
@@ -302,7 +302,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         </div>
         <div className="meals">
           {comidas.length === 0 && (
-            <p style={{ fontSize: 13, color: "#b09a7e", textAlign: "center", padding: "12px 8px" }}>
+            <p style={{ fontSize: 13, color: "var(--mut)", textAlign: "center", padding: "12px 8px" }}>
               Sin comidas hoy. Toca + para registrar.
             </p>
           )}
@@ -322,16 +322,12 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
 const CSS = `
   * { box-sizing: border-box; margin: 0; }
   .app {
-    --bg1:#1a0f0a; --bg2:#241410; --panel:#2a1812; --panel2:#32201a;
-    --paper:#f6e9c8; --ink:#0d0805;
-    --red:#d23b2e; --amber:#e8a13a; --gold:#d4a84a; --teal:#3f7d6e;
-    --txt:#f3e6cd; --mut:#b09a7e;
     max-width:460px; margin:0 auto; padding:16px 14px 16px;
     color:var(--txt); min-height:100vh; position:relative; overflow-x:hidden;
     font-family:'Zen Kaku Gothic New', sans-serif; font-weight:500;
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 12%, #5a2a1e 0%, transparent 45%),
+      radial-gradient(circle at 50% 12%, var(--glow) 0%, transparent 45%),
       linear-gradient(165deg, var(--bg2), var(--bg1));
   }
   .app.beast {
@@ -342,11 +338,11 @@ const CSS = `
   }
   .panel {
     position:relative; background:linear-gradient(160deg,var(--panel2),var(--panel));
-    border:2px solid #0d0805; border-radius:6px; padding:16px; margin-bottom:14px;
+    border:2px solid var(--ink); border-radius:6px; padding:16px; margin-bottom:14px;
     box-shadow: 4px 4px 0 #00000055, inset 0 1px 0 #ffffff0d;
   }
   .asis-card { display:flex; align-items:center; gap:12px; width:100%; cursor:pointer; text-align:left;
-    background:linear-gradient(95deg,#3a1c14,#2a1812); border:2px solid var(--amber); border-radius:8px;
+    background:linear-gradient(95deg,var(--panel2),var(--panel)); border:2px solid var(--amber); border-radius:8px;
     padding:14px; margin-bottom:14px; box-shadow:4px 4px 0 #00000055; color:var(--paper); transition:.12s; }
   .asis-card:active { transform:translate(2px,2px); box-shadow:2px 2px 0 #00000055; }
   .asis-card-ic { color:var(--amber); flex-shrink:0; }
@@ -362,7 +358,7 @@ const CSS = `
   }
   .hero-top { display:flex; align-items:baseline; gap:10px; }
   .mute-btn { margin-left:auto; align-self:center; width:34px; height:34px; border-radius:6px;
-    border:2px solid var(--ink); background:#241410; color:var(--mut); cursor:pointer;
+    border:2px solid var(--ink); background:var(--bg2); color:var(--mut); cursor:pointer;
     display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.12s; }
   .mute-btn:hover { color:var(--amber); border-color:var(--amber); }
   .brand { font-family:'Bebas Neue'; font-size:40px; letter-spacing:2px; line-height:.9;
@@ -372,15 +368,15 @@ const CSS = `
   .avatar-aura {
     position:absolute; top:-6px; left:50%; transform:translateX(-50%);
     width:150px; height:150px; border-radius:50%;
-    background: radial-gradient(circle, #e8a13a55 0%, #d23b2e33 40%, transparent 70%);
+    background: radial-gradient(circle, var(--amber)55 0%, var(--red)33 40%, transparent 70%);
     filter: blur(3px);
   }
-  .app.beast .avatar-aura { background: radial-gradient(circle, #f5b94288 0%, #d23b2e55 45%, transparent 72%); }
+  .app.beast .avatar-aura { background: radial-gradient(circle, #f5b94288 0%, var(--red)55 45%, transparent 72%); }
   .avatar-frame {
     position:relative; width:122px; height:122px; margin:0 auto; border:3px solid var(--paper);
     border-radius:50%; overflow:hidden; box-shadow:0 4px 14px #00000066;
     background: repeating-radial-gradient(circle at 50% 65%, #ffffff0a 0 1px, transparent 1px 6px),
-                linear-gradient(160deg,#3a241c,#241410);
+                linear-gradient(160deg,var(--panel2),var(--bg2));
   }
   .avatar-fig { width:100%; height:100%; }
   .avatar-edit { display:inline-block; margin-top:9px; font-size:10px; font-weight:700; letter-spacing:2px;
@@ -391,7 +387,7 @@ const CSS = `
   .beast-btn {
     display:inline-flex; align-items:center; gap:7px; font-family:'Bebas Neue'; font-size:19px;
     letter-spacing:2px; color:var(--paper); cursor:pointer;
-    background:linear-gradient(95deg,var(--red),#a02619);
+    background:linear-gradient(95deg,var(--red),var(--red));
     border:2px solid var(--ink); padding:8px 20px; border-radius:4px; box-shadow:3px 3px 0 var(--ink);
     transition:.1s;
   }
@@ -400,7 +396,7 @@ const CSS = `
     margin-bottom:14px; border-bottom:3px solid var(--red); padding-bottom:5px; display:inline-block; }
   .card-head { display:flex; justify-content:space-between; align-items:flex-start; }
   .xp-head { display:flex; align-items:center; gap:16px; margin-bottom:10px; }
-  .lvl { text-align:center; background:linear-gradient(160deg,#3a241c,#241410); color:var(--gold);
+  .lvl { text-align:center; background:linear-gradient(160deg,var(--panel2),var(--bg2)); color:var(--gold);
     border:2px solid var(--gold); padding:6px 16px; border-radius:5px; }
   .lvl-num { display:block; font-family:'Bebas Neue'; font-size:40px; line-height:.9;
     }
@@ -408,7 +404,7 @@ const CSS = `
   .xp-info { display:flex; flex-direction:column; }
   .xp-lbl { font-size:12px; color:var(--mut); letter-spacing:3px; font-weight:700; }
   .xp-val { font-size:18px; font-weight:900; }
-  .xp-bar { height:14px; background:#1a0f0a; border:2px solid var(--ink); border-radius:3px; overflow:hidden; }
+  .xp-bar { height:14px; background:var(--bg1); border:2px solid var(--ink); border-radius:3px; overflow:hidden; }
   .xp-fill { height:100%; background:
       repeating-linear-gradient(45deg, var(--amber) 0 7px, var(--red) 7px 14px); }
   .stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-top:14px; }
@@ -421,7 +417,7 @@ const CSS = `
   .imc-ideal b { color:var(--amber); }
   .imc-msg { font-size:12px; color:var(--mut); font-weight:500; line-height:1.4; }
   .imc-nota { font-size:10px; color:var(--mut); margin-top:10px; font-style:italic; opacity:.8; }
-  .stat { background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink); border-radius:5px;
+  .stat { background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid var(--ink); border-radius:5px;
     padding:11px 6px; text-align:center; }
   .stat svg { color:var(--amber); }
   .stat b { display:block; font-family:'Bebas Neue'; font-size:21px; letter-spacing:1px; margin:3px 0 1px; color:var(--paper); }
@@ -441,24 +437,24 @@ const CSS = `
   .macro-val em { color:var(--mut); font-style:normal; font-size:13px; }
   .menu { display:flex; flex-direction:column; gap:9px; }
   .menu-item { display:flex; align-items:center; gap:12px; width:100%; cursor:pointer; text-align:left;
-    background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink); border-radius:5px;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid var(--ink); border-radius:5px;
     padding:11px; transition:.12s; }
   .menu-item:hover { transform:translateX(3px); border-color:var(--amber); }
   .menu-ic { width:40px; height:40px; border-radius:5px; border:2px solid var(--ink);
-    background:linear-gradient(135deg,var(--red),#7a1d13); color:var(--paper);
+    background:linear-gradient(135deg,var(--red),var(--red)); color:var(--paper);
     display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .menu-txt { flex:1; display:flex; flex-direction:column; }
   .menu-txt b { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:var(--paper); }
   .menu-txt em { font-size:12px; color:var(--mut); font-style:normal; }
   .menu-arrow { color:var(--mut); }
   .add-btn { width:34px; height:34px; border-radius:10px; cursor:pointer; color:#fff;
-    background:linear-gradient(135deg,var(--red),#7a1d13); border:2px solid var(--ink);
+    background:linear-gradient(135deg,var(--red),var(--red)); border:2px solid var(--ink);
     display:flex; align-items:center; justify-content:center; box-shadow:2px 2px 0 var(--ink); }
   .meals { display:flex; flex-direction:column; gap:9px; }
-  .meal { display:flex; align-items:center; gap:11px; background:linear-gradient(160deg,#341f18,#26150f);
+  .meal { display:flex; align-items:center; gap:11px; background:linear-gradient(160deg,var(--panel2),var(--panel));
     border:2px solid var(--ink); border-radius:5px; padding:10px; }
   .meal-tag { width:36px; height:36px; border-radius:10px; border:2px solid var(--gold);
-    background:#241410; color:var(--gold); display:flex; align-items:center; justify-content:center;
+    background:var(--bg2); color:var(--gold); display:flex; align-items:center; justify-content:center;
     font-size:18px; font-weight:900; flex-shrink:0; }
   .meal-info { flex:1; display:flex; flex-direction:column; }
   .meal-info b { font-size:15px; font-weight:900; color:var(--paper); }

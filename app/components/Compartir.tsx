@@ -172,20 +172,20 @@ const CSS = `
   * { box-sizing:border-box; margin:0; }
   .comp {
     max-width:460px; margin:0 auto; padding:16px 14px 90px;
-    color:#f3e6cd; font-family:'Zen Kaku Gothic New', sans-serif;
+    color:var(--txt); font-family:'Zen Kaku Gothic New', sans-serif;
     background:
       radial-gradient(#00000022 1px, transparent 1.5px) 0 0 / 8px 8px,
-      radial-gradient(circle at 50% 8%, #5a2a1e 0%, transparent 45%),
-      linear-gradient(165deg, #241410, #1a0f0a);
+      radial-gradient(circle at 50% 8%, var(--glow) 0%, transparent 45%),
+      linear-gradient(165deg, var(--bg2), var(--bg1));
     min-height:100vh;
   }
   .top { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
-  .back { width:38px; height:38px; border-radius:6px; border:2px solid #0d0805;
-    background:linear-gradient(160deg,#341f18,#26150f); color:#f6e9c8; cursor:pointer;
+  .back { width:38px; height:38px; border-radius:6px; border:2px solid var(--ink);
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); color:var(--paper); cursor:pointer;
     display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .top-title { font-family:'Bebas Neue'; font-size:26px; letter-spacing:2px; flex:1; }
-  .top-jp { font-size:12px; color:#b09a7e; letter-spacing:2px; }
-  .comp-hint { font-size:13px; color:#b09a7e; text-align:center; margin-bottom:14px; font-style:italic; }
+  .top-jp { font-size:12px; color:var(--mut); letter-spacing:2px; }
+  .comp-hint { font-size:13px; color:var(--mut); text-align:center; margin-bottom:14px; font-style:italic; }
 
   /* ===== TARJETA COMPARTIBLE (relación 9:16, estilo story) ===== */
   .tarjeta-wrap { display:flex; justify-content:center; margin-bottom:18px; }
@@ -194,42 +194,42 @@ const CSS = `
   .t-marco { width:100%; height:100%; padding:24px 18px; display:flex; flex-direction:column; align-items:center;
     background:
       radial-gradient(circle at 50% 12%, #6b3220 0%, transparent 55%),
-      radial-gradient(circle at 50% 90%, #3a1c14 0%, transparent 50%),
-      linear-gradient(170deg, #2a1812, #1a0f0a);
-    border:3px solid #e8a13a; position:relative; }
-  .t-marco::before { content:""; position:absolute; inset:8px; border:1px solid #e8a13a55; border-radius:10px; pointer-events:none; }
+      radial-gradient(circle at 50% 90%, var(--panel2) 0%, transparent 50%),
+      linear-gradient(170deg, var(--panel), var(--bg1));
+    border:3px solid var(--amber); position:relative; }
+  .t-marco::before { content:""; position:absolute; inset:8px; border:1px solid var(--amber)55; border-radius:10px; pointer-events:none; }
 
   .t-logo { text-align:center; margin-bottom:8px; }
-  .t-kanji { font-family:'Bebas Neue'; font-size:18px; color:#e8a13a; letter-spacing:6px; display:block; }
-  .t-brand { font-family:'Bebas Neue'; font-size:32px; letter-spacing:4px; color:#f6e9c8;
-    text-shadow:2px 2px 0 #d23b2e; line-height:1; }
+  .t-kanji { font-family:'Bebas Neue'; font-size:18px; color:var(--amber); letter-spacing:6px; display:block; }
+  .t-brand { font-family:'Bebas Neue'; font-size:32px; letter-spacing:4px; color:var(--paper);
+    text-shadow:2px 2px 0 var(--red); line-height:1; }
 
   .t-figs { display:flex; align-items:flex-end; gap:8px; margin:10px 0 4px; }
   .t-fig { filter:drop-shadow(2px 3px 0 #00000066); }
 
   .t-nombre { text-align:center; margin-bottom:14px; }
-  .t-saludo { font-family:'Bebas Neue'; font-size:13px; letter-spacing:3px; color:#b09a7e; display:block; }
-  .t-name { font-family:'Bebas Neue'; font-size:26px; letter-spacing:2px; color:#f6e9c8; line-height:1; margin:2px 0 6px;
-    text-shadow:2px 2px 0 #0d0805; }
-  .t-rango { display:inline-block; padding:4px 12px; border-radius:14px; border:2px solid #0d0805;
-    font-family:'Bebas Neue'; font-size:13px; letter-spacing:2px; color:#0d0805; }
+  .t-saludo { font-family:'Bebas Neue'; font-size:13px; letter-spacing:3px; color:var(--mut); display:block; }
+  .t-name { font-family:'Bebas Neue'; font-size:26px; letter-spacing:2px; color:var(--paper); line-height:1; margin:2px 0 6px;
+    text-shadow:2px 2px 0 var(--ink); }
+  .t-rango { display:inline-block; padding:4px 12px; border-radius:14px; border:2px solid var(--ink);
+    font-family:'Bebas Neue'; font-size:13px; letter-spacing:2px; color:var(--ink); }
 
   .t-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-bottom:12px; }
   .t-stat { display:flex; flex-direction:column; align-items:center; padding:8px 4px; gap:2px;
-    background:#1a0f0a; border:2px solid #0d0805; border-radius:7px; color:#e8a13a; }
-  .t-stat b { font-family:'Bebas Neue'; font-size:24px; color:#f6e9c8; line-height:1; }
-  .t-stat span { font-size:9px; letter-spacing:1px; color:#b09a7e; font-weight:700; }
+    background:var(--bg1); border:2px solid var(--ink); border-radius:7px; color:var(--amber); }
+  .t-stat b { font-family:'Bebas Neue'; font-size:24px; color:var(--paper); line-height:1; }
+  .t-stat span { font-size:9px; letter-spacing:1px; color:var(--mut); font-weight:700; }
 
-  .t-frase { font-size:12px; color:#f3e6cd; font-style:italic; text-align:center; margin-bottom:10px; opacity:.9; }
-  .t-footer { font-family:'Bebas Neue'; font-size:11px; letter-spacing:3px; color:#e8a13a; text-align:center; }
+  .t-frase { font-size:12px; color:var(--txt); font-style:italic; text-align:center; margin-bottom:10px; opacity:.9; }
+  .t-footer { font-family:'Bebas Neue'; font-size:11px; letter-spacing:3px; color:var(--amber); text-align:center; }
 
   /* Botones */
   .comp-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%;
-    font-family:'Bebas Neue'; font-size:21px; letter-spacing:2px; color:#f6e9c8; cursor:pointer;
-    background:linear-gradient(95deg,#d23b2e,#a02619); border:2px solid #0d0805;
-    padding:14px; border-radius:6px; box-shadow:3px 3px 0 #0d0805; transition:.1s; margin-bottom:10px; }
+    font-family:'Bebas Neue'; font-size:21px; letter-spacing:2px; color:var(--paper); cursor:pointer;
+    background:linear-gradient(95deg,var(--red),var(--red)); border:2px solid var(--ink);
+    padding:14px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-bottom:10px; }
   .comp-btn:active { transform:translate(3px,3px); box-shadow:none; }
   .comp-btn:disabled { opacity:.6; cursor:default; }
-  .comp-msg { text-align:center; font-size:13px; font-weight:700; color:#e8a13a; margin-bottom:10px; }
-  .comp-nota { font-size:11px; color:#b09a7e; text-align:center; font-style:italic; line-height:1.4; }
+  .comp-msg { text-align:center; font-size:13px; font-weight:700; color:var(--amber); margin-bottom:10px; }
+  .comp-nota { font-size:11px; color:var(--mut); text-align:center; font-style:italic; line-height:1.4; }
 `;

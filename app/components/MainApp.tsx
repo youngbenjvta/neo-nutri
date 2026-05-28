@@ -16,6 +16,7 @@ import YunsFlotante from "./YunsFlotante";
 import Intro from "./Intro";
 import Asistente from "./Asistente";
 import Compartir from "./Compartir";
+import { useTema } from "./temas";
 import { supabase } from "./supabaseClient";
 
 // ============================================================
@@ -46,6 +47,9 @@ const TABS = [
 ];
 
 export default function MainApp() {
+  // Activa el sistema de temas (aplica los colores guardados al cargar)
+  useTema();
+
   // 'screen' recuerda qué pantalla mostrar. Empieza en 'inicio'.
   const [screen, setScreen] = useState("inicio");
 
@@ -176,16 +180,34 @@ export default function MainApp() {
 }
 
 const SHELL_CSS = `
+  /* ===== SISTEMA DE TEMAS =====
+     Variables del tema. KAIZEN por defecto (se ven incluso antes de que useTema corra).
+     Cuando el hook aplica un tema diferente, sobreescribe las --t-* y todo sigue funcionando. */
+  :root {
+    --t-bg1: #1a0f0a; --t-bg2: #241410; --t-panel: #2a1812; --t-panel2: #32201a;
+    --t-paper: #f6e9c8; --t-ink: #0d0805;
+    --t-red: #d23b2e; --t-amber: #e8a13a; --t-gold: #d4a84a; --t-teal: #3f7d6e;
+    --t-txt: #f3e6cd; --t-mut: #b09a7e; --t-glow: #5a2a1e;
+
+    --bg1: var(--t-bg1); --bg2: var(--t-bg2);
+    --panel: var(--t-panel); --panel2: var(--t-panel2);
+    --paper: var(--t-paper); --ink: var(--t-ink);
+    --red: var(--t-red); --amber: var(--t-amber);
+    --gold: var(--t-gold); --teal: var(--t-teal);
+    --txt: var(--t-txt); --mut: var(--t-mut);
+  }
+  body { background: var(--t-bg1); transition: background .3s; }
+
   .shell { position:relative; }
   .screen-area { padding-bottom:70px; }
   .bottom-nav {
     position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:460px;
     display:flex; justify-content:space-around; padding:9px 6px 13px;
-    background:linear-gradient(0deg,#0d0805,#1a0f0a); border-top:2px solid #d23b2e; z-index:50;
+    background:linear-gradient(0deg,var(--t-ink),var(--t-bg1)); border-top:2px solid var(--t-red); z-index:50;
   }
   .bottom-nav .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px;
-    background:none; border:none; color:#b09a7e; cursor:pointer; font-size:10px; letter-spacing:1px; font-weight:700; }
-  .bottom-nav .nav-item.active { color:#e8a13a; }
+    background:none; border:none; color:var(--t-mut); cursor:pointer; font-size:10px; letter-spacing:1px; font-weight:700; }
+  .bottom-nav .nav-item.active { color:var(--t-amber); }
 `;
 
 const PRONTO_CSS = `
