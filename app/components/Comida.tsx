@@ -4,6 +4,7 @@ import { ChevronLeft, Plus, Trash2, Flame, X, Search, Star } from "lucide-react"
 import { useComidasNube } from "./useComidasNube";
 import { ALIMENTOS, CATEGORIAS, CANTIDADES, type Alimento } from "./alimentos";
 import { useFavoritos } from "./useFavoritos";
+import { RECETAS, ETIQUETAS_FILTROS, TIPOS_RECETA, type Receta } from "./recetas";
 import { usePersistedState } from "./usePersistedState";
 import { calcularMetaKcal } from "./calcularMeta";
 
@@ -34,7 +35,12 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
   // Estado del formulario para añadir
   const [abrir, setAbrir] = useState(false);
   const [tipo, setTipo] = useState("Desayuno");
-  const [modo, setModo] = useState<"alimento" | "manual">("alimento");
+  const [modo, setModo] = useState<"alimento" | "manual" | "receta">("alimento");
+
+  // Estados del modo recetas
+  const [filtroTipo, setFiltroTipo] = useState("Todos");
+  const [filtroEtq, setFiltroEtq] = useState("todos");
+  const [recetaAbierta, setRecetaAbierta] = useState<Receta | null>(null);
 
   // Modo "por alimento": elegir alimento + cantidad (calcula kcal solo)
   const [busqueda, setBusqueda] = useState("");
@@ -203,13 +209,16 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
               ))}
             </div>
 
-            {/* Selector de modo: por alimento o manual */}
+            {/* Selector de modo: por alimento, manual o receta */}
             <div className="modo-row">
               <button className={`modo-btn ${modo === "alimento" ? "on" : ""}`} onClick={() => setModo("alimento")}>
-                ⚖️ POR ALIMENTO
+                ⚖️ ALIMENTO
               </button>
               <button className={`modo-btn ${modo === "manual" ? "on" : ""}`} onClick={() => setModo("manual")}>
                 ✏️ MANUAL
+              </button>
+              <button className={`modo-btn ${modo === "receta" ? "on" : ""}`} onClick={() => setModo("receta")}>
+                🍳 RECETA
               </button>
             </div>
 
@@ -326,6 +335,88 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
                   <button className="confirm-btn" onClick={añadirManual}>AÑADIR</button>
                 </div>
               </>
+            )}
+
+            {/* MODO RECETA */}
+            {modo === "receta" && !recetaAbierta && (
+              <>
+                {/* Filtro por tipo de comida */}
+                <div className="rec-filtros">
+                  {TIPOS_RECETA.map((t) => (
+                    <button
+                      key={t}
+                      className={`rec-filtro ${filtroTipo === t ? "on" : ""}`}
+                      onClick={() => setFiltroTipo(t)}
+                    >{t}</button>
+                  ))}
+                </div>
+                {/* Filtro por etiqueta */}
+                <div className="rec-filtros">
+                  {ETIQUETAS_FILTROS.map((e) => (
+                    <button
+                      key={e.id}
+                      className={`rec-filtro ${filtroEtq === e.id ? "on" : ""}`}
+                      onClick={() => setFiltroEtq(e.id)}
+                    >{e.label}</button>
+                  ))}
+                </div>
+
+                {/* Lista de recetas */}
+                <div className="rec-lista">
+                  {RECETAS
+                    .filter((r) => filtroTipo === "Todos" || r.tipo === filtroTipo)
+                    .filter((r) => filtroEtq === "todos" || r.etiquetas.includes(filtroEtq))
+                    .map((r) => (
+                      <button key={r.id} className="rec-card" onClick={() => setRecetaAbierta(r)}>
+                        <span className="rec-emoji">{r.emoji}</span>
+                        <div className="rec-info">
+                          <b>{r.nombre}</b>
+                          <span className="rec-meta">{r.tipo} · {r.tiempo} · {r.kcal} kcal</span>
+                        </div>
+                      </button>
+                    ))}
+                  {RECETAS.filter((r) => filtroTipo === "Todos" || r.tipo === filtroTipo)
+                    .filter((r) => filtroEtq === "todos" || r.etiquetas.includes(filtroEtq))
+                    .length === 0 && (
+                    <p className="vacio">No hay recetas con esos filtros. Prueba otros.</p>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* DETALLE DE UNA RECETA */}
+            {modo === "receta" && recetaAbierta && (
+              <div className="rec-detalle">
+                <button className="rec-volver" onClick={() => setRecetaAbierta(null)}>← Volver a recetas</button>
+                <div className="rec-cabecera">
+                  <span className="rec-emoji-big">{recetaAbierta.emoji}</span>
+                  <div>
+                    <h3 className="rec-titulo">{recetaAbierta.nombre}</h3>
+                    <p className="rec-meta-big">{recetaAbierta.tipo} · {recetaAbierta.tiempo} · <b>{recetaAbierta.kcal} kcal</b></p>
+                  </div>
+                </div>
+
+                <h4 className="rec-subt">Ingredientes</h4>
+                <ul className="rec-ingr">
+                  {recetaAbierta.ingredientes.map((ing, i) => <li key={i}>• {ing}</li>)}
+                </ul>
+
+                <h4 className="rec-subt">Preparación</h4>
+                <ol className="rec-pasos">
+                  {recetaAbierta.pasos.map((p, i) => <li key={i}><b>{i + 1}.</b> {p}</li>)}
+                </ol>
+
+                <button
+                  className="confirm-btn rec-registrar"
+                  onClick={() => {
+                    agregar(recetaAbierta.tipo, recetaAbierta.nombre, recetaAbierta.kcal);
+                    setRecetaAbierta(null);
+                    setAbrir(false);
+                  }}
+                >
+                  + REGISTRAR COMO {recetaAbierta.tipo.toUpperCase()}
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -531,4 +622,39 @@ const CSS = `
   .fav-jp { font-size:18px; font-weight:900; flex-shrink:0; min-width:24px; text-align:center; }
   .fav-nombre { flex:1; font-size:13.5px; font-weight:700; }
   .fav-kcal { font-family:'Bebas Neue'; font-size:15px; color:var(--amber); flex-shrink:0; }
+
+  /* RECETAS — filtros y lista */
+  .rec-filtros { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .rec-filtro { font-size:11px; font-weight:700; padding:6px 11px; border-radius:14px; cursor:pointer;
+    background:#241410; border:2px solid var(--ink); color:var(--mut); transition:.12s; }
+  .rec-filtro:hover { color:var(--amber); border-color:var(--amber); }
+  .rec-filtro.on { background:linear-gradient(95deg,var(--red),#a02619); color:var(--paper); border-color:var(--ink); }
+
+  .rec-lista { display:flex; flex-direction:column; gap:8px; max-height:430px; overflow-y:auto; padding-right:4px; }
+  .rec-card { display:flex; align-items:center; gap:12px; padding:11px 12px; cursor:pointer; text-align:left;
+    background:linear-gradient(160deg,#341f18,#26150f); border:2px solid var(--ink); border-radius:7px;
+    color:var(--paper); transition:.12s; }
+  .rec-card:hover { border-color:var(--amber); transform:translateY(-1px); }
+  .rec-card:active { transform:translate(2px,2px); }
+  .rec-emoji { font-size:30px; flex-shrink:0; }
+  .rec-info { flex:1; display:flex; flex-direction:column; }
+  .rec-info b { font-size:14px; font-weight:900; margin-bottom:2px; }
+  .rec-meta { font-size:11px; color:var(--mut); font-weight:500; }
+
+  /* RECETAS — detalle */
+  .rec-detalle { display:flex; flex-direction:column; gap:10px; }
+  .rec-volver { background:none; border:none; color:var(--amber); font-size:13px; font-weight:700; cursor:pointer;
+    text-align:left; padding:4px 0; align-self:flex-start; }
+  .rec-cabecera { display:flex; gap:12px; align-items:center; background:#241410; border:2px solid var(--ink);
+    border-radius:7px; padding:12px; }
+  .rec-emoji-big { font-size:48px; flex-shrink:0; }
+  .rec-titulo { font-family:'Bebas Neue'; font-size:22px; letter-spacing:1px; color:var(--paper); line-height:1; margin-bottom:4px; }
+  .rec-meta-big { font-size:12px; color:var(--mut); }
+  .rec-meta-big b { color:var(--amber); }
+  .rec-subt { font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:var(--amber); margin-top:4px;
+    border-bottom:2px solid var(--red); padding-bottom:3px; }
+  .rec-ingr, .rec-pasos { display:flex; flex-direction:column; gap:6px; padding:0; list-style:none; }
+  .rec-ingr li, .rec-pasos li { font-size:13px; color:var(--txt); line-height:1.4; }
+  .rec-pasos li b { color:var(--amber); margin-right:4px; }
+  .rec-registrar { margin-top:8px; padding:13px; font-family:'Bebas Neue'; font-size:17px; letter-spacing:2px; }
 `;
