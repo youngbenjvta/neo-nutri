@@ -2,10 +2,11 @@
 import React, { useState, useEffect } from "react";
 import {
   Flame, Dumbbell, TrendingUp, ChevronRight,
-  Activity, Plus, Droplet, Beef, Wheat, Salad, Volume2, VolumeX, Sparkles
+  Activity, Plus, Droplet, Beef, Wheat, Salad, Volume2, VolumeX, Sparkles, Moon
 } from "lucide-react";
 import { usePersistedState } from "./usePersistedState";
 import { useProgreso } from "./useProgreso";
+import { useDiarioNube } from "./useDiarioNube";
 import { getAvatar, WarriorSVG } from "./avatars";
 import { useSonido } from "./useSonido";
 import { calcularMetaKcal } from "./calcularMeta";
@@ -148,6 +149,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
     }
   }, [ultimoDiaComidas, setComidas, setUltimoDiaComidas]);
   const { prog } = useProgreso();
+  const { diario, actualizar } = useDiarioNube();
   // Leemos del MISMO sitio donde el Perfil guarda (claves compartidas)
   const [nombre] = usePersistedState("perfil.nombre", "GUERRERO");
   const [avatarId] = usePersistedState("perfil.avatar", "a1");
@@ -266,6 +268,57 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
           <p className="imc-nota">El IMC es solo una guía general, no un diagnóstico médico.</p>
         </section>
       )}
+
+      {/* DESCANSO — sueño de hoy */}
+      <section className="panel">
+        <h2 className="card-title"><Moon size={18} /> 睡 TU DESCANSO</h2>
+
+        {/* Horas dormidas */}
+        <div className="sueno-horas">
+          <span className="sueno-label">¿Cuántas horas dormiste?</span>
+          <div className="sueno-control">
+            <button
+              className="sueno-btn"
+              onClick={() => actualizar({ ...diario, sueno: Math.max(0, diario.sueno - 0.5) })}
+            >−</button>
+            <span className="sueno-num">{diario.sueno} <small>h</small></span>
+            <button
+              className="sueno-btn"
+              onClick={() => actualizar({ ...diario, sueno: Math.min(14, diario.sueno + 0.5) })}
+            >+</button>
+          </div>
+        </div>
+
+        {/* Cómo se siente */}
+        <span className="sueno-label">¿Cómo te sientes hoy?</span>
+        <div className="animo-row">
+          {[
+            { id: "descansado", emoji: "😄", label: "Descansado" },
+            { id: "normal", emoji: "🙂", label: "Normal" },
+            { id: "cansado", emoji: "😴", label: "Cansado" },
+          ].map((a) => (
+            <button
+              key={a.id}
+              className={`animo-btn ${diario.animo === a.id ? "on" : ""}`}
+              onClick={() => actualizar({ ...diario, animo: a.id })}
+            >
+              <span className="animo-emoji">{a.emoji}</span>
+              <span className="animo-label">{a.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Consejo de Yuns según el descanso */}
+        {diario.sueno > 0 && (
+          <p className="sueno-tip">
+            {diario.sueno >= 7
+              ? "¡Buen descanso, guerrero! Dormir bien es parte del progreso. 🦊"
+              : diario.sueno >= 5
+              ? "Descansaste algo, pero tu cuerpo agradece 7-8h. Cuídate. 🦊"
+              : "Dormiste poco. El descanso es cuando tu cuerpo se hace fuerte. 🦊"}
+          </p>
+        )}
+      </section>
 
       {/* MACROS */}
       <section className="panel">
@@ -417,6 +470,26 @@ const CSS = `
   .imc-ideal b { color:var(--amber); }
   .imc-msg { font-size:12px; color:var(--mut); font-weight:500; line-height:1.4; }
   .imc-nota { font-size:10px; color:var(--mut); margin-top:10px; font-style:italic; opacity:.8; }
+
+  /* DESCANSO / SUEÑO */
+  .sueno-horas { margin-bottom:16px; }
+  .sueno-label { display:block; font-size:13px; font-weight:700; color:var(--txt); margin-bottom:10px; }
+  .sueno-control { display:flex; align-items:center; justify-content:center; gap:20px; }
+  .sueno-btn { width:42px; height:42px; border-radius:8px; border:2px solid var(--ink); cursor:pointer;
+    background:linear-gradient(160deg,var(--panel2),var(--panel)); color:var(--paper);
+    font-size:24px; font-weight:900; display:flex; align-items:center; justify-content:center; }
+  .sueno-btn:active { transform:scale(.92); }
+  .sueno-num { font-family:'Bebas Neue'; font-size:36px; color:var(--amber); min-width:90px; text-align:center; }
+  .sueno-num small { font-size:18px; color:var(--mut); }
+  .animo-row { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:4px; }
+  .animo-btn { display:flex; flex-direction:column; align-items:center; gap:5px; padding:11px 4px; cursor:pointer;
+    background:var(--bg2); border:2px solid var(--ink); border-radius:8px; transition:.12s; }
+  .animo-btn:hover { border-color:var(--amber); }
+  .animo-btn.on { border-color:var(--amber); background:linear-gradient(160deg,var(--panel2),var(--panel)); }
+  .animo-emoji { font-size:26px; }
+  .animo-label { font-size:11px; font-weight:700; color:var(--txt); }
+  .sueno-tip { font-size:12px; color:var(--paper); background:var(--bg2); border:2px solid var(--amber);
+    border-radius:8px; padding:10px 12px; margin-top:14px; font-weight:700; line-height:1.4; text-align:center; }
   .stat { background:linear-gradient(160deg,var(--panel2),var(--panel)); border:2px solid var(--ink); border-radius:5px;
     padding:11px 6px; text-align:center; }
   .stat svg { color:var(--amber); }
