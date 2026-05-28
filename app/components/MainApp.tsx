@@ -13,6 +13,7 @@ import Logros from "./Logros";
 import Login from "./Login";
 import NuevaContrasena from "./NuevaContrasena";
 import YunsFlotante from "./YunsFlotante";
+import Cronometro from "./Cronometro";
 import Intro from "./Intro";
 import Asistente from "./Asistente";
 import Compartir from "./Compartir";
@@ -175,6 +176,9 @@ export default function MainApp() {
 
       {/* Yuns flotante: presente en toda la app */}
       <YunsFlotante />
+
+      {/* Cronómetro de descanso: presente en toda la app */}
+      <Cronometro />
     </div>
   );
 }
