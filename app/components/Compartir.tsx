@@ -6,6 +6,7 @@ import { useRacha } from "./useRacha";
 import { usePersistedState } from "./usePersistedState";
 import { YunsSVG } from "./Yuns";
 import { calcularRango, GuerreroSVG } from "./Guerrero";
+import { nivelDeRacha } from "./rachaColores";
 
 // ============================================================
 //  KAIZEN — COMPARTIR PROGRESO
@@ -27,6 +28,8 @@ export default function Compartir({ onBack }: { onBack?: () => void }) {
 
   // Rango del guerrero (cinturón) según nivel/racha/logros
   const rango = calcularRango(prog.nivel, racha, logrosCount);
+  // Color de la racha según los días
+  const nivelRacha = nivelDeRacha(racha);
 
   async function compartir() {
     if (!tarjetaRef.current) return;
@@ -124,10 +127,10 @@ export default function Compartir({ onBack }: { onBack?: () => void }) {
                 <b>{prog.nivel}</b>
                 <span>NIVEL</span>
               </div>
-              <div className="t-stat">
-                <Flame size={20} />
-                <b>{racha}</b>
-                <span>RACHA</span>
+              <div className="t-stat" style={{ borderColor: nivelRacha.color }}>
+                <Flame size={20} style={{ color: nivelRacha.color }} />
+                <b style={{ color: nivelRacha.color }}>{racha}</b>
+                <span style={{ color: nivelRacha.color }}>{nivelRacha.nombre.toUpperCase()}</span>
               </div>
               <div className="t-stat">
                 <Dumbbell size={20} />

@@ -7,6 +7,7 @@ import {
 import { usePersistedState } from "./usePersistedState";
 import { useProgreso } from "./useProgreso";
 import { useDiarioNube } from "./useDiarioNube";
+import { nivelDeRacha, diasAlSiguienteNivel } from "./rachaColores";
 import { getAvatar, WarriorSVG } from "./avatars";
 import { useSonido } from "./useSonido";
 import { calcularMetaKcal } from "./calcularMeta";
@@ -172,6 +173,9 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   const imc = calcularIMC(Number(perfilPeso), Number(perfilAltura));
   const sonido = useSonido();
   const { racha } = useRacha();
+  // Nivel de la racha (color y nombre evolutivos)
+  const nivelRacha = nivelDeRacha(racha);
+  const diasFaltan = diasAlSiguienteNivel(racha);
   const xpPct = (prog.xp / prog.xpMax) * 100;
   const go = (s: string) => onNavigate && onNavigate(s);
 
@@ -245,10 +249,17 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <div className="xp-bar"><div className="xp-fill" style={{ width: `${xpPct}%` }} /></div>
 
         <div className="stat-grid">
-          <div className="stat"><Flame size={18} /><b>{racha} días</b><span>RACHA</span></div>
+          <div className="stat racha-stat" style={{ borderColor: nivelRacha.color }}>
+            <Flame size={20} style={{ color: nivelRacha.color, filter: `drop-shadow(0 0 4px ${nivelRacha.brillo})` }} />
+            <b style={{ color: nivelRacha.color }}>{racha} días</b>
+            <span style={{ color: nivelRacha.color }}>{nivelRacha.nombre.toUpperCase()}</span>
+          </div>
           <div className="stat"><Dumbbell size={18} /><b>{prog.entrenos}</b><span>ENTRENOS</span></div>
           <div className="stat"><Activity size={18} /><b>{pesoActual} kg</b><span>PESO</span></div>
         </div>
+        {diasFaltan > 0 && (
+          <p className="racha-hint">🔥 {diasFaltan} {diasFaltan === 1 ? "día" : "días"} para subir de rango</p>
+        )}
       </section>
 
       {/* IMC (guía orientativa) */}
@@ -495,6 +506,10 @@ const CSS = `
   .stat svg { color:var(--amber); }
   .stat b { display:block; font-family:'Bebas Neue'; font-size:21px; letter-spacing:1px; margin:3px 0 1px; color:var(--paper); }
   .stat span { font-size:9px; color:var(--mut); letter-spacing:1.5px; font-weight:700; }
+  /* Stat de racha con color dinámico */
+  .racha-stat { transition: border-color .3s; animation: rachaGlow 2.4s ease-in-out infinite; }
+  @keyframes rachaGlow { 0%,100% { box-shadow: 0 0 0 transparent; } 50% { box-shadow: 0 0 12px currentColor; } }
+  .racha-hint { font-size:11px; color:var(--mut); text-align:center; margin-top:8px; font-style:italic; opacity:.85; }
   .macros { display:flex; align-items:center; gap:16px; }
   .ring-wrap { position:relative; width:130px; height:130px; flex-shrink:0; }
   .ring { width:100%; height:100%; }
