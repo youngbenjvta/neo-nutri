@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, Plus, Trash2, Flame, X, Search, Star } from "lucide-react";
 import { useComidasNube } from "./useComidasNube";
-import { ALIMENTOS, CATEGORIAS, CANTIDADES, type Alimento } from "./alimentos";
+import { ALIMENTOS, CATEGORIAS, CANTIDADES, macrosDesde, type Alimento } from "./alimentos";
 import { useFavoritos } from "./useFavoritos";
 import { RECETAS, ETIQUETAS_FILTROS, TIPOS_RECETA, type Receta } from "./recetas";
 import { usePersistedState } from "./usePersistedState";
@@ -285,6 +285,17 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
                       <Flame size={18} />
                       <b>{kcalCalculado}</b> kcal
                     </div>
+                    {/* Desglose de macros del alimento elegido */}
+                    {kcalCalculado > 0 && (() => {
+                      const m = macrosDesde(kcalCalculado, elegido.categoria);
+                      return (
+                        <div className="macro-mini">
+                          <div className="macro-chip prote"><b>{m.prote}g</b><span>prote</span></div>
+                          <div className="macro-chip carbs"><b>{m.carbs}g</b><span>carbs</span></div>
+                          <div className="macro-chip grasa"><b>{m.grasa}g</b><span>grasa</span></div>
+                        </div>
+                      );
+                    })()}
                     <button className="confirm-btn" onClick={agregarAlPlato}>+ AGREGAR AL PLATO</button>
                   </div>
                 )}
@@ -561,6 +572,16 @@ const CSS = `
   .calc-total { display:flex; align-items:center; gap:8px; font-family:'Bebas Neue'; font-size:28px;
     color:var(--amber); justify-content:center; }
   .calc-total svg { color:var(--red); }
+
+  /* Chips de macros (proteína/carbos/grasa) bajo el cálculo */
+  .macro-mini { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:10px 0; }
+  .macro-chip { display:flex; flex-direction:column; align-items:center; padding:7px 4px; gap:1px;
+    background:var(--bg2); border:2px solid var(--ink); border-radius:6px; }
+  .macro-chip b { font-family:'Bebas Neue'; font-size:18px; line-height:1; letter-spacing:1px; }
+  .macro-chip span { font-size:9px; letter-spacing:1.5px; color:var(--mut); font-weight:700; }
+  .macro-chip.prote b { color:var(--red); }
+  .macro-chip.carbs b { color:var(--amber); }
+  .macro-chip.grasa b { color:var(--teal); }
 
   /* PLATO EN CONSTRUCCIÓN */
   .plato { background:var(--bg2); border:2px solid var(--amber); border-radius:8px; padding:12px;

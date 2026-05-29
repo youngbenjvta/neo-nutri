@@ -1,9 +1,11 @@
 "use client";
 
 // ============================================================
-//  NEO NUTRI — Base de alimentos para cálculo automático.
+//  KAIZEN — Base de alimentos para cálculo automático.
 //  Cada alimento tiene calorías por su unidad natural.
 //  kcal = cantidad elegida × kcalPorUnidad
+//  Los macros (proteína/carbos/grasa) se estiman automáticamente
+//  según la categoría del alimento.
 // ============================================================
 
 export type Alimento = {
@@ -13,6 +15,38 @@ export type Alimento = {
   unidad: string;      // "taza", "100g", "unidad", "cda"
   kcalPorUnidad: number;
 };
+
+export type Macros = {
+  prote: number;   // gramos de proteína
+  carbs: number;   // gramos de carbohidratos
+  grasa: number;   // gramos de grasa
+};
+
+// Proporción de macros estimada según la categoría (porcentaje de kcal)
+// Recordar: 1g prote = 4 kcal, 1g carbs = 4 kcal, 1g grasa = 9 kcal
+const MACROS_POR_CATEGORIA: Record<string, { prote: number; carbs: number; grasa: number }> = {
+  "Proteínas":          { prote: 0.65, carbs: 0.05, grasa: 0.30 },
+  "Carbohidratos":      { prote: 0.10, carbs: 0.82, grasa: 0.08 },
+  "Latinos":            { prote: 0.20, carbs: 0.50, grasa: 0.30 },
+  "Comida rápida":      { prote: 0.18, carbs: 0.42, grasa: 0.40 },
+  "Frutas":             { prote: 0.05, carbs: 0.90, grasa: 0.05 },
+  "Verduras":           { prote: 0.30, carbs: 0.60, grasa: 0.10 },
+  "Lácteos":            { prote: 0.30, carbs: 0.35, grasa: 0.35 },
+  "Bebidas":            { prote: 0.10, carbs: 0.80, grasa: 0.10 },
+  "Panadería y dulces": { prote: 0.08, carbs: 0.55, grasa: 0.37 },
+  "Aderezos":           { prote: 0.05, carbs: 0.15, grasa: 0.80 },
+  "Grasas y snacks":    { prote: 0.10, carbs: 0.20, grasa: 0.70 },
+};
+
+// Calcula los macros para una cantidad de kcal de cierta categoría
+export function macrosDesde(kcal: number, categoria?: string): Macros {
+  const prop = (categoria && MACROS_POR_CATEGORIA[categoria]) || MACROS_POR_CATEGORIA["Comida rápida"];
+  return {
+    prote: Math.round((kcal * prop.prote) / 4),
+    carbs: Math.round((kcal * prop.carbs) / 4),
+    grasa: Math.round((kcal * prop.grasa) / 9),
+  };
+}
 
 // Lista completa y variada (con enfoque fitness)
 export const ALIMENTOS: Alimento[] = [
