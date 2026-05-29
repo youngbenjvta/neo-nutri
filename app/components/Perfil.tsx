@@ -7,6 +7,8 @@ import { useProgreso } from "./useProgreso";
 import { useRacha } from "./useRacha";
 import { usePersistedState } from "./usePersistedState";
 import { TEMAS, useTema } from "./temas";
+import { useTienda } from "./useTienda";
+import { TITULOS } from "./productos";
 
 // ============================================================
 //  NUT-KAIZEN — PERFIL (shonen pintado)
@@ -27,7 +29,7 @@ const NIVELES_GYM = [
   { id: "avz", label: "AVANZADO" },
 ];
 
-export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }: { onBack?: () => void; onCerrarSesion?: () => void; onLogros?: () => void; onCompartir?: () => void }) {
+export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir, onTienda }: { onBack?: () => void; onCerrarSesion?: () => void; onLogros?: () => void; onCompartir?: () => void; onTienda?: () => void }) {
   const { perfil, guardarPerfil, cargando, guardando } = usePerfilNube();
   const { prog } = useProgreso();
   const { racha } = useRacha();
@@ -50,6 +52,16 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }
 
   // Sistema de temas (skins)
   const { temaActual, setTema } = useTema();
+  const { inventario, equiparTemaExtra } = useTienda();
+  // Cambiar tema base: también desequipa el tema extra (si había)
+  function cambiarTemaBase(id: string) {
+    if (inventario.temaExtraEquipado) {
+      equiparTemaExtra(inventario.temaExtraEquipado); // toggle off
+    }
+    setTema(id);
+  }
+  // Título actualmente equipado
+  const tituloEquipado = TITULOS.find((t) => t.id === inventario.tituloEquipado);
 
   // Foto de perfil (guardada en el dispositivo como texto base64)
   const [foto, setFoto] = usePersistedState("perfil.foto", "");
@@ -145,6 +157,11 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }
         <p className="current-sub">
           Nivel {prog.nivel} · Racha {racha}d · {logrosCount} logros
         </p>
+        {tituloEquipado && (
+          <p className="titulo-equipado" style={{ color: tituloEquipado.color }}>
+            {tituloEquipado.emoji} {tituloEquipado.nombre}
+          </p>
+        )}
       </section>
 
       {/* SELECTOR DE GÉNERO DEL KIMONO */}
@@ -210,7 +227,7 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }
             <button
               key={t.id}
               className={`tema-card ${temaActual.id === t.id ? "on" : ""}`}
-              onClick={() => setTema(t.id)}
+              onClick={() => cambiarTemaBase(t.id)}
             >
               <div className="tema-preview" style={{ background: t.vars["--t-bg2"] }}>
                 <span className="tema-dot" style={{ background: t.vars["--t-red"] }} />
@@ -262,6 +279,12 @@ export default function Perfil({ onBack, onCerrarSesion, onLogros, onCompartir }
           {guardando ? "GUARDANDO..." : guardado ? "✓ ¡GUARDADO!" : "GUARDAR CAMBIOS"}
         </button>
       </section>
+
+      {onTienda && (
+        <button className="tienda-btn" onClick={onTienda}>
+          🛒 TIENDA KAIZEN
+        </button>
+      )}
 
       {onLogros && (
         <button className="logros-btn" onClick={onLogros}>
@@ -381,6 +404,14 @@ const CSS = `
     cursor:pointer; background:linear-gradient(95deg,var(--teal),#2c5d51); border:2px solid var(--ink);
     padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-bottom:11px; }
   .compartir-btn:active { transform:translate(3px,3px); box-shadow:none; }
+  /* Botón Tienda KAIZEN */
+  .tienda-btn { width:100%; font-family:'Bebas Neue'; font-size:19px; letter-spacing:2px; color:var(--ink);
+    cursor:pointer; background:linear-gradient(95deg,#d4a84a,#b8923a); border:2px solid var(--ink);
+    padding:12px; border-radius:6px; box-shadow:3px 3px 0 var(--ink); transition:.1s; margin-bottom:11px; }
+  .tienda-btn:active { transform:translate(3px,3px); box-shadow:none; }
+  /* Título equipado */
+  .titulo-equipado { margin-top:6px; font-family:'Bebas Neue'; font-size:16px; letter-spacing:1.5px;
+    text-shadow:1px 1px 0 var(--ink); }
   .logout-btn { width:100%; font-family:'Bebas Neue'; font-size:17px; letter-spacing:2px; color:var(--mut);
     cursor:pointer; background:var(--bg2); border:2px solid var(--ink); padding:11px; border-radius:6px;
     transition:.12s; }

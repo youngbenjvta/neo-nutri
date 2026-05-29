@@ -7,6 +7,8 @@ import { usePersistedState } from "./usePersistedState";
 import { YunsSVG } from "./Yuns";
 import { calcularRango, GuerreroSVG } from "./Guerrero";
 import { nivelDeRacha } from "./rachaColores";
+import { useTienda } from "./useTienda";
+import { TITULOS } from "./productos";
 
 // ============================================================
 //  KAIZEN — COMPARTIR PROGRESO
@@ -30,6 +32,9 @@ export default function Compartir({ onBack }: { onBack?: () => void }) {
   const rango = calcularRango(prog.nivel, racha, logrosCount);
   // Color de la racha según los días
   const nivelRacha = nivelDeRacha(racha);
+  // Título equipado (si hay)
+  const { inventario } = useTienda();
+  const tituloEquipado = TITULOS.find((t) => t.id === inventario.tituloEquipado);
 
   async function compartir() {
     if (!tarjetaRef.current) return;
@@ -118,6 +123,11 @@ export default function Compartir({ onBack }: { onBack?: () => void }) {
               <div className="t-rango" style={{ background: rango.cinturon.color }}>
                 <span>{rango.cinturon.nombre}</span>
               </div>
+              {tituloEquipado && (
+                <p className="t-titulo" style={{ color: tituloEquipado.color }}>
+                  {tituloEquipado.emoji} {tituloEquipado.nombre}
+                </p>
+              )}
             </div>
 
             {/* Stats principales */}
@@ -216,6 +226,8 @@ const CSS = `
     text-shadow:2px 2px 0 var(--ink); }
   .t-rango { display:inline-block; padding:4px 12px; border-radius:14px; border:2px solid var(--ink);
     font-family:'Bebas Neue'; font-size:13px; letter-spacing:2px; color:var(--ink); }
+  .t-titulo { margin-top:6px; font-family:'Bebas Neue'; font-size:14px; letter-spacing:1.5px;
+    text-shadow:1px 1px 0 var(--ink); }
 
   .t-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; width:100%; margin-bottom:12px; }
   .t-stat { display:flex; flex-direction:column; align-items:center; padding:8px 4px; gap:2px;

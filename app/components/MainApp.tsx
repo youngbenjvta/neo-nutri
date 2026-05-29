@@ -15,6 +15,7 @@ import NuevaContrasena from "./NuevaContrasena";
 import YunsFlotante from "./YunsFlotante";
 import Cronometro from "./Cronometro";
 import MonedasAnimacion from "./MonedasAnimacion";
+import Tienda from "./Tienda";
 import Intro from "./Intro";
 import Asistente from "./Asistente";
 import Compartir from "./Compartir";
@@ -140,13 +141,15 @@ export default function MainApp() {
       case "progreso":
         return <Progreso onBack={() => setScreen("inicio")} />;
       case "perfil":
-        return <Perfil onBack={() => setScreen("inicio")} onCerrarSesion={cerrarSesion} onLogros={() => setScreen("logros")} onCompartir={() => setScreen("compartir")} />;
+        return <Perfil onBack={() => setScreen("inicio")} onCerrarSesion={cerrarSesion} onLogros={() => setScreen("logros")} onCompartir={() => setScreen("compartir")} onTienda={() => setScreen("tienda")} />;
       case "logros":
         return <Logros onBack={() => setScreen("perfil")} />;
       case "asistente":
         return <Asistente onBack={() => setScreen("inicio")} />;
       case "compartir":
         return <Compartir onBack={() => setScreen("perfil")} />;
+      case "tienda":
+        return <Tienda onBack={() => setScreen("perfil")} />;
       default:
         return <Dashboard onNavigate={setScreen} />;
     }
