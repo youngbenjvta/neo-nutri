@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "./supabaseClient";
+import { EVENTO_GANASTE, type EventoGanaste } from "./useMonedas";
 
 // ============================================================
 //  useRacha — días seguidos usando la app (efecto "racha 🔥").
@@ -50,8 +51,27 @@ export function useRacha() {
         setCargando(false);
         return;
       } else if (data.ultima_fecha === ayerTxt) {
-        // Entró ayer: ¡racha +1!
+        // Entró ayer: ¡racha +1! Y +5 monedas KAIZEN 🪙
         nuevaRacha = (Number(data.racha) || 0) + 1;
+        try {
+          // Actualizar saldo de monedas en la nube (+5)
+          const { data: prog } = await supabase
+            .from("progreso")
+            .select("monedas")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          const nuevoSaldo = (Number(prog?.monedas) || 0) + 5;
+          await supabase.from("progreso").upsert({
+            user_id: user.id,
+            monedas: nuevoSaldo,
+            actualizado: new Date().toISOString(),
+          });
+          try { localStorage.setItem("kaizen.monedas", String(nuevoSaldo)); } catch { /* nada */ }
+          // Disparar animación
+          window.dispatchEvent(new CustomEvent<EventoGanaste>(EVENTO_GANASTE, {
+            detail: { cantidad: 5, razon: `¡Día ${nuevaRacha} de racha! 🔥` },
+          }));
+        } catch { /* nada */ }
       } else {
         // Se saltó días: reinicia a 1
         nuevaRacha = 1;

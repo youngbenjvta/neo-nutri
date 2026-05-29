@@ -4,6 +4,7 @@ import { ChevronLeft, Plus, Trash2, Flame, X, Search, Star } from "lucide-react"
 import { useComidasNube } from "./useComidasNube";
 import { ALIMENTOS, CATEGORIAS, CANTIDADES, macrosDesde, type Alimento } from "./alimentos";
 import { useFavoritos } from "./useFavoritos";
+import { useMonedas, yaReclamadoHoy, marcarReclamadoHoy } from "./useMonedas";
 import { RECETAS, ETIQUETAS_FILTROS, TIPOS_RECETA, type Receta } from "./recetas";
 import { usePersistedState } from "./usePersistedState";
 import { calcularMetaKcal } from "./calcularMeta";
@@ -31,6 +32,7 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
   // Comidas desde la nube (Supabase)
   const { comidas, cargando, agregar, borrar: borrarNube } = useComidasNube();
   const { favoritos, agregarFavorito, quitarFavorito, esFavorito } = useFavoritos();
+  const { sumar: sumarMonedas } = useMonedas();
 
   // Estado del formulario para añadir
   const [abrir, setAbrir] = useState(false);
@@ -76,6 +78,7 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
   }, [comidas, cargando]);
 
   const totalKcal = comidas.reduce((suma, c) => suma + (Number(c.kcal) || 0), 0);
+
   // Leemos los datos del perfil (sincronizados en localStorage) para la meta
   const [perfilPeso] = usePersistedState("perfil.pesoMeta", "70");
   const [perfilAltura] = usePersistedState("perfil.altura", "175");
@@ -89,6 +92,16 @@ export default function Comida({ onBack }: { onBack?: () => void }) {
     edad: Number(perfilEdad),
     objetivo: perfilObjetivo,
   });
+
+  // Detecta cuándo se cumple la meta de kcal del día y da +10 monedas (1 vez por día)
+  useEffect(() => {
+    if (cargando) return;
+    if (totalKcal >= META && META > 0 && !yaReclamadoHoy("meta-kcal")) {
+      marcarReclamadoHoy("meta-kcal");
+      sumarMonedas(10, "¡Meta de calorías cumplida! 🍱");
+    }
+  }, [totalKcal, META, cargando, sumarMonedas]);
+
   const pct = Math.min((totalKcal / META) * 100, 100);
 
   const totalPlato = plato.reduce((s, p) => s + p.kcal, 0);

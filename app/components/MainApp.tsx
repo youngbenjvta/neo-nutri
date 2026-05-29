@@ -14,6 +14,7 @@ import Login from "./Login";
 import NuevaContrasena from "./NuevaContrasena";
 import YunsFlotante from "./YunsFlotante";
 import Cronometro from "./Cronometro";
+import MonedasAnimacion from "./MonedasAnimacion";
 import Intro from "./Intro";
 import Asistente from "./Asistente";
 import Compartir from "./Compartir";
@@ -179,6 +180,9 @@ export default function MainApp() {
 
       {/* Cronómetro de descanso: presente en toda la app */}
       <Cronometro />
+
+      {/* Animación '+X monedas' cuando ganas KAIZEN COINS */}
+      <MonedasAnimacion />
     </div>
   );
 }

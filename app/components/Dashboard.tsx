@@ -7,6 +7,7 @@ import {
 import { usePersistedState } from "./usePersistedState";
 import { useProgreso } from "./useProgreso";
 import { useDiarioNube } from "./useDiarioNube";
+import { useMonedas } from "./useMonedas";
 import { nivelDeRacha, diasAlSiguienteNivel } from "./rachaColores";
 import { getAvatar, WarriorSVG } from "./avatars";
 import { useSonido } from "./useSonido";
@@ -151,6 +152,7 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
   }, [ultimoDiaComidas, setComidas, setUltimoDiaComidas]);
   const { prog } = useProgreso();
   const { diario, actualizar } = useDiarioNube();
+  const { monedas } = useMonedas();
   // Leemos del MISMO sitio donde el Perfil guarda (claves compartidas)
   const [nombre] = usePersistedState("perfil.nombre", "GUERRERO");
   const [avatarId] = usePersistedState("perfil.avatar", "a1");
@@ -204,6 +206,10 @@ export default function Dashboard({ onNavigate }: { onNavigate?: (s: string) => 
         <div className="hero-top">
           <h1 className="brand">KAIZEN</h1>
           <span className="brand-jp">改善 · KAIZEN</span>
+          <div className="monedas-badge" title={`${monedas} KAIZEN COINS`}>
+            <span className="monedas-icono">🪙</span>
+            <span className="monedas-saldo">{monedas}</span>
+          </div>
           <button className="mute-btn" onClick={sonido.toggleMudo} aria-label="Silenciar" title="Silenciar sonidos">
             {sonido.mudo ? <VolumeX size={18} /> : <Volume2 size={18} />}
           </button>
@@ -421,13 +427,19 @@ const CSS = `
     mask: radial-gradient(circle at 72% 32%, #000 8%, transparent 58%);
   }
   .hero-top { display:flex; align-items:baseline; gap:10px; }
-  .mute-btn { margin-left:auto; align-self:center; width:34px; height:34px; border-radius:6px;
+  .mute-btn { align-self:center; width:34px; height:34px; border-radius:6px;
     border:2px solid var(--ink); background:var(--bg2); color:var(--mut); cursor:pointer;
     display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:.12s; }
   .mute-btn:hover { color:var(--amber); border-color:var(--amber); }
   .brand { font-family:'Bebas Neue'; font-size:40px; letter-spacing:2px; line-height:.9;
     color:var(--paper); text-shadow:3px 3px 0 var(--red); }
   .brand-jp { font-size:12px; color:var(--mut); letter-spacing:3px; }
+  /* Badge dorado de KAIZEN COINS */
+  .monedas-badge { margin-left:auto; display:flex; align-items:center; gap:4px;
+    padding:6px 10px; border-radius:14px; background:linear-gradient(95deg,#d4a84a,#b8923a);
+    border:2px solid var(--ink); box-shadow:2px 2px 0 var(--ink); }
+  .monedas-icono { font-size:14px; line-height:1; }
+  .monedas-saldo { font-family:'Bebas Neue'; font-size:16px; letter-spacing:1px; color:var(--ink); line-height:1; }
   .avatar { position:relative; width:150px; margin:14px auto 16px; text-align:center; }
   .avatar-aura {
     position:absolute; top:-6px; left:50%; transform:translateX(-50%);

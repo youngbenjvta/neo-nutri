@@ -5,6 +5,7 @@ import { useProgreso, XP_POR_ENTRENO } from "./useProgreso";
 import { useSonido } from "./useSonido";
 import { usePersistedState } from "./usePersistedState";
 import { useDiarioNube } from "./useDiarioNube";
+import { useMonedas } from "./useMonedas";
 import { useMisRutinas, type RutinaPropia } from "./useMisRutinas";
 import { EJERCICIOS, GRUPOS } from "./ejercicios";
 
@@ -78,6 +79,7 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
   const { completarEntreno } = useProgreso();
   const { diario, actualizar } = useDiarioNube();
   const { rutinas: misRutinas, crear, borrar } = useMisRutinas();
+  const { sumar: sumarMonedas } = useMonedas();
   const sonido = useSonido();
   const [hecho, setHecho] = useState(false); // muestra confirmación de XP ganado
 
@@ -109,6 +111,8 @@ export default function Rutinas({ onBack }: { onBack?: () => void }) {
     const subioNivel = await completarEntreno();
     // Sumamos el entrenamiento de hoy (se reinicia cada día)
     await actualizar({ ...diario, entrenos: diario.entrenos + 1 });
+    // ¡Ganas 15 monedas KAIZEN por entrenar! 🪙
+    await sumarMonedas(15, "¡Por entrenar! 💪");
     if (subioNivel) {
       sonido.levelUp();   // ¡tu levelup.mp3!
     } else {
